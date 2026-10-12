@@ -39,6 +39,8 @@ Prices are per block, not per layout; a per-layout price list must come from R&F
 
 ## Layouts (brochure pp. 12–16; plans in `images/floor-plans/NN-type-X.jpg`)
 
+Note (12 Oct 2026): ten plan files had been saved under the wrong type name; they were renamed to the type printed on each plan (B2, B1, B3, B3b, C4a, C4, C4c, C4b, C5, C2). Each plan page also carries R&F's description of the layout; the site uses those texts.
+
 | Type | Bed | Bath | m² | sq ft | Brochure name |
 |---|---|---|---:|---:|---|
 | A / A(M) | Studio | 1 | 29.16 | 313 | Compact Elegance |

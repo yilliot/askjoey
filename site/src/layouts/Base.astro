@@ -75,7 +75,7 @@ const waHref = wa(waText);
     <button class="close" type="button">Close</button>
     <div class="eyebrow" style="color:var(--bronze);margin-bottom:1rem">{brand.name}</div>
     {links.map((l) => <a class="m" href={l.href}>{l.label}</a>)}
-    <div class="who">{agent.name} · {agent.ren}<br />{agent.agency}{agent.agencyReg && ` · ${agent.agencyReg}`}</div>
+    <div class="who">{agent.name} · {agent.ren}<br />{agent.agency}{agent.agencyReg && ` · ${agent.agencyReg}`}<br />{agent.company.name} · {agent.company.reg}</div>
     <div class="acts">
       <a class="pill light" href={waHref} target="_blank" rel="noopener" data-wa><Icon name="wa" />WhatsApp</a>
       <a class="pill ghost" href={tel()}><Icon name="phone" />Call</a>
@@ -91,6 +91,7 @@ const waHref = wa(waText);
       <div>
         <b>{agent.name}</b> · {agent.role} · <b>{agent.ren}</b><br />
         <b>{agent.agency}</b>{agent.agencyReg && <> · <b>{agent.agencyReg}</b></>}<br />
+        {agent.company.name} · Co. No. {agent.company.reg}<br />
         <a href={waHref} target="_blank" rel="noopener" data-wa>WhatsApp {agent.phone}</a> · <a href={tel()}>Call</a> · <a href={agent.instagram.url} target="_blank" rel="noopener">Instagram {agent.instagram.handle}</a>
       </div>
       <div class="fine"><slot name="fine" /></div>
