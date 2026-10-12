@@ -15,7 +15,7 @@ fi
 
 [ -z "$(git status --porcelain)" ] || { echo "commit first: the release is built from what is on GitHub"; git status --short | head; exit 1; }
 git push -q origin main
-ssh -o BatchMode=yes $HOST bash /srv/askjoey/repo/deploy/axon-release.sh
+ssh -o BatchMode=yes $HOST 'git -C /srv/askjoey/repo fetch -q origin main && git -C /srv/askjoey/repo reset -q --hard origin/main && bash /srv/askjoey/repo/deploy/axon-release.sh'
 
 for path in / /new-casa-suites/ /causewayz-square/; do
   code=$(curl -s -o /dev/null -w '%{http_code}' "$URL$path?v=$(git rev-parse --short HEAD)")

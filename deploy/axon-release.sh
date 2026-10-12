@@ -4,6 +4,8 @@
 #   axon-release.sh            pull + build + switch
 #   axon-release.sh rollback   point "current" back at the previous release
 set -euo pipefail
+# (all in main(): bash parses the whole script before the git reset below can rewrite this file)
+main() {
 ROOT=/srv/askjoey
 REPO=$ROOT/repo
 cd "$ROOT"
@@ -12,7 +14,7 @@ if [ "${1:-}" = rollback ]; then
   prev=$(ls -1d releases/* | sort | tail -2 | head -1); cur=$(readlink current)
   [ "$prev" != "$cur" ] || { echo "no earlier release"; exit 1; }
   ln -sfn "$prev" current.tmp && mv -T current.tmp current
-  echo "live: $prev"; exit 0
+  echo "live: $prev"; return 0
 fi
 
 git -C "$REPO" fetch -q origin main
@@ -33,3 +35,5 @@ cp -a "$REPO/site/dist" "$rel"
 ln -sfn "$rel" current.tmp && mv -T current.tmp current
 ls -1d releases/* | sort | head -n -5 | xargs -r rm -rf
 echo "live: $rel"
+}
+main "$@"
