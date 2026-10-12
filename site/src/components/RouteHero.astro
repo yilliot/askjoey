@@ -1,0 +1,52 @@
+---
+// J1 · "the route": the hero stays pinned while the scroll draws Woodlands North → front door.
+// Without the motion script it is a still photo with the title and the facts bar.
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import Facts from './Facts.astro';
+import ArtPicture from './ArtPicture.astro';
+import { routeMap } from '../lib/routemap';
+import { project, layouts } from '../data/new-casa-suites';
+import { wa, rm, sgd } from '../lib/format';
+
+const p = project;
+const hl = layouts.two.find((l) => l.key === p.heroLayout.key)!;
+---
+<section class="j" id="top" aria-label={`${p.name}: from Woodlands North to your front door`}>
+  <div class="j-stage">
+    <div class="j-map" aria-hidden="true">
+      <div class="m-d" set:html={routeMap('desk')} />
+      <div class="m-p" set:html={routeMap('phone')} />
+      <div class="j-rail"><i></i></div>
+      <div class="j-cap c1"><div><div class="n">01 / 05</div><h2>Start at Woodlands North</h2><p>Singapore's RTS Link terminal, on the Thomson–East Coast Line.</p></div></div>
+      <div class="j-cap c2"><div><div class="n">02 / 05</div><h2>Cross on the RTS Link</h2><p>Clear both customs once, at a co-located station.<span class="d-only"> Up to 10,000 passengers an hour each way.</span></p></div></div>
+      <div class="j-cap c3"><div><div class="n">03 / 05</div><h2>Arrive beside the JB CIQ</h2><p>Bukit Chagar station, by the CIQ and JB Sentral.</p></div></div>
+      <div class="j-cap c4"><div><div class="n">04 / 05</div><div class="j-count"><span>650</span><small> m</small></div><p>The last 650 m under cover: the link bridge from the CIQ to R&amp;F Princess Cove.</p></div></div>
+      <div class="j-cap c5"><div><div class="n">05 / 05</div><h2>Through R&amp;F Mall, home</h2><p>A covered link bridge joins R&amp;F Mall to New Casa Suites.</p></div></div>
+    </div>
+
+    <div class="j-photo">
+      <ArtPicture wide={p.img.hero} tall={p.img.heroPortrait} alt={`${p.name} at dusk, artist's impression`} eager />
+    </div>
+
+    <div class="j-coord mono">{p.coord}<br />Artist's impression</div>
+    <div class="j-title">
+      <div class="eyebrow"><span class="rule"></span>{p.area}</div>
+      <h1>New Casa <em>Suites</em></h1>
+      <p>{p.intro}</p>
+      <div class="j-cue"><i></i>Scroll · from Woodlands to your front door</div>
+    </div>
+
+    <div class="j-plan">
+      <div class="pl"><Picture src={hl.plan} alt={`Type ${hl.key} floor plan`} widths={[400, 720]} sizes="(max-width:760px) 90vw, 360px" formats={['avif', 'webp']} /></div>
+      <div class="eyebrow" style="margin-top:.5rem">Your home · Block {p.heroLayout.block}</div>
+      <h2>Type {hl.key} · {hl.name}</h2>
+      <div class="sub">{hl.beds} bed · {hl.baths} bath · {hl.sqft} sq ft ({hl.m2} m²)</div>
+      <a class="pill dark sm" href={wa(`Hi Joey, I'd like the price and availability of Type ${hl.key} (${hl.beds} bed, ${hl.sqft} sq ft) at New Casa Suites.`)} target="_blank" rel="noopener"><Icon name="wa" />Ask about Type {hl.key}</a>
+    </div>
+
+    <a class="j-skip" href="#address">Skip the journey ↓</a>
+    <Facts project={p} />
+    <div class="j-mfacts"><div class="p"><small>From</small><b>{rm(p.priceFrom)}</b><span>≈ {sgd(p.priceFrom)}</span></div><div><small>Beds · baths</small><b>Studio–4 · 1–3</b></div><div><small>Size</small><b>313–1,555 sf</b></div></div>
+  </div>
+</section>

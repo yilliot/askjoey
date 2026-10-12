@@ -1,0 +1,25 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import joey from '../assets/img/joey/joey.jpg';
+import { agent } from '../data/agent';
+import { wa, tel } from '../lib/format';
+
+interface Props { waText: string; id?: string }
+const { waText, id = 'joey' } = Astro.props;
+---
+<section class="sec" id={id}>
+  <div class="agent rv">
+    <div class="face"><Picture src={joey} alt={`${agent.name}, ${agent.role}`} widths={[180, 270, 400]} sizes="132px" formats={['avif', 'webp']} /></div>
+    <div>
+      <div class="eyebrow">Your agent</div>
+      <h3>{agent.name}</h3>
+      <div class="who">{agent.role} · <b>{agent.ren}</b> · {agent.agency}<br />{agent.line} WhatsApp or call for price lists, floor plans and viewings.</div>
+    </div>
+    <div class="cta">
+      <a class="pill dark" href={wa(waText)} target="_blank" rel="noopener"><Icon name="wa" />WhatsApp Joey</a>
+      <a class="pill line" href={tel()}><Icon name="phone" />{agent.phone}</a>
+      <a class="pill line" href={agent.instagram.url} target="_blank" rel="noopener"><Icon name="ig" />{agent.instagram.handle}</a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,112 @@
+---
+import '@fontsource-variable/newsreader/opsz.css';
+import '@fontsource-variable/newsreader/opsz-italic.css';
+import '@fontsource-variable/hanken-grotesk';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import 'lenis/dist/lenis.css';
+import '../styles/site.css';
+import type { ImageMetadata } from 'astro';
+import { getImage } from 'astro:assets';
+import Icon from '../components/Icon.astro';
+import { agent, site } from '../data/agent';
+import { wa, tel } from '../lib/format';
+
+interface Props {
+  title: string;
+  description: string;
+  og: ImageMetadata;
+  brand: { name: string; sub: string; href?: string };
+  links: { href: string; label: string }[];
+  /** nav starts white on a photo */
+  over?: boolean;
+  /** default WhatsApp message for this page */
+  waText: string;
+  page: string;
+}
+const { title, description, og, brand, links, over = false, waText, page } = Astro.props;
+const ogImg = await getImage({ src: og, width: 1200, height: 630, fit: 'cover', format: 'jpg', quality: 80 });
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogUrl = new URL(ogImg.src, Astro.site);
+// The axon address is a preview; keep it out of search until Joey's own domain is live.
+const noindex = Astro.site?.hostname.endsWith('axon.commun.cloud');
+const waHref = wa(waText);
+---
+<!doctype html>
+<html lang="en-SG">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  {noindex && <meta name="robots" content="noindex, nofollow" />}
+  <link rel="canonical" href={canonical} />
+  <meta name="theme-color" content="#F6F1E9" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogUrl} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:url" content={canonical} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <script is:inline>
+    // Turn the scroll film on before first paint, unless the visitor asked for less motion.
+    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('motion');
+  </script>
+</head>
+<body data-page={page}>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class:list={['nav', { over, solid: !over }]} id="nav">
+    <a class="brand" href={brand.href ?? '/'}>
+      <span class="serif">{brand.name}</span>
+      <small>{brand.sub}</small>
+    </a>
+    <nav class="nav-links" aria-label="Sections">
+      {links.map((l) => <a href={l.href}>{l.label}</a>)}
+    </nav>
+    <a class="pill light sm" href={waHref} target="_blank" rel="noopener" data-wa><Icon name="wa" />WhatsApp Joey</a>
+    <button class="menu-btn" type="button" aria-controls="menu" aria-expanded="false">Menu</button>
+  </header>
+
+  <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu">
+    <button class="close" type="button">Close</button>
+    <div class="eyebrow" style="color:var(--bronze);margin-bottom:1rem">{brand.name}</div>
+    {links.map((l) => <a class="m" href={l.href}>{l.label}</a>)}
+    <div class="who">{agent.name} · {agent.ren}<br />{agent.agency}{agent.agencyReg && ` · ${agent.agencyReg}`}</div>
+    <div class="acts">
+      <a class="pill light" href={waHref} target="_blank" rel="noopener" data-wa><Icon name="wa" />WhatsApp</a>
+      <a class="pill ghost" href={tel()}><Icon name="phone" />Call</a>
+    </div>
+  </div>
+
+  <main id="main">
+    <slot />
+  </main>
+
+  <footer class="foot">
+    <div class="row">
+      <div>
+        <b>{agent.name}</b> · {agent.role} · <b>{agent.ren}</b><br />
+        <b>{agent.agency}</b>{agent.agencyReg && <> · <b>{agent.agencyReg}</b></>}<br />
+        <a href={waHref} target="_blank" rel="noopener" data-wa>WhatsApp {agent.phone}</a> · <a href={tel()}>Call</a> · <a href={agent.instagram.url} target="_blank" rel="noopener">Instagram {agent.instagram.handle}</a>
+      </div>
+      <div class="fine"><slot name="fine" /></div>
+    </div>
+    <slot name="legal" />
+    <p class="legal" style="margin-top:1.4rem">© {new Date().getFullYear()} {site.name} · {agent.name}, {agent.ren}. Developer names, logos, renders and floor plans belong to their developers. Renders are artist's impressions and may differ from the finished homes.</p>
+  </footer>
+
+  <a class="pill dark fab" href={waHref} target="_blank" rel="noopener" data-wa><Icon name="wa" />WhatsApp Joey</a>
+  <div class="cbar">
+    <a class="pill dark" href={waHref} target="_blank" rel="noopener" data-wa data-wa-ctx><Icon name="wa" /><span class="wa-l">WhatsApp Joey</span></a>
+    <a class="pill line" href={tel()}><Icon name="phone" />Call</a>
+  </div>
+
+  <script>
+    import '../scripts/site';
+  </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+---
+import Base from '../layouts/Base.astro';
+import { project as ncs } from '../data/new-casa-suites';
+---
+<Base page="404" title="Page not found — Ask Joey" description="This page doesn't exist." og={ncs.img.aerial}
+  brand={{ name: 'Joey Lee', sub: 'JB homes for Singapore buyers', href: '/' }}
+  links={[{ href: '/new-casa-suites/', label: 'New Casa Suites' }, { href: '/causewayz-square/', label: 'Causewayz Square' }]}
+  waText="Hi Joey, I couldn't find a page on your website.">
+  <section class="sec" style="min-height:70vh;padding-top:10rem">
+    <div class="eyebrow"><span class="rule"></span>404</div>
+    <h1 class="h2">This page isn't here.</h1>
+    <p class="muted" style="margin-top:1rem">Try <a class="textlink" href="/new-casa-suites/">New Casa Suites</a>, <a class="textlink" href="/causewayz-square/">Causewayz Square</a> or <a class="textlink" href="/">the home page</a>.</p>
+  </section>
+  <Fragment slot="fine">Joey Lee · REN 80914 · IQI Realty Sdn Bhd</Fragment>
+</Base>

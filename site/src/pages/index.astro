@@ -1,0 +1,146 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Agent from '../components/Agent.astro';
+import Legal from '../components/Legal.astro';
+import Icon from '../components/Icon.astro';
+import { project as ncs } from '../data/new-casa-suites';
+import { project as cws } from '../data/causewayz-square';
+import { agent } from '../data/agent';
+import { rm, sgd, wa, fxNote } from '../lib/format';
+
+const waText = "Hi Joey, I'm looking for a home in JB.";
+const links = [
+  { href: '/new-casa-suites/', label: 'New Casa Suites' },
+  { href: '/causewayz-square/', label: 'Causewayz Square' },
+  { href: '#how', label: 'How Joey helps' },
+  { href: '#faq', label: 'FAQ' },
+  { href: '#joey', label: 'About Joey' },
+];
+const projects = [
+  { p: ncs, href: '/new-casa-suites/', dev: 'R&F', img: ncs.img.day, alt: "New Casa Suites from the street, artist's impression", blurb: 'Freehold homes at R&F Princess Cove, linked to R&F Mall and a 650 m covered bridge from the JB CIQ and the RTS Link.', near: '650 m covered bridge to CIQ' },
+  { p: cws, href: '/causewayz-square/', dev: 'Exsim', img: cws.img.card, alt: cws.img.cardAlt, blurb: cws.blurb, near: cws.near },
+];
+---
+<Base
+  page="home"
+  title="Ask Joey · New homes by the Causeway, for Singapore buyers"
+  description={`Joey Lee (${agent.ren}, ${agent.agency}) helps Singapore buyers find a home in Johor Bahru: New Casa Suites at R&F Princess Cove and Exsim's Causewayz Square, both by the JB CIQ and the RTS Link.`}
+  og={ncs.img.aerial}
+  brand={{ name: 'Joey Lee', sub: 'JB homes for Singapore buyers', href: '/' }}
+  links={links}
+  over
+  waText={waText}
+>
+  <section class="phero" aria-label="Ask Joey">
+    <div class="bg"><Picture src={ncs.img.aerial} alt="The Straits of Johor and the Causeway from the air, artist's impression" widths={[960, 1600, 2400, 3000]} sizes="100vw" formats={['avif', 'webp']} loading="eager" fetchpriority="high" /></div>
+    <div class="in">
+      <div class="eyebrow"><span class="rule"></span>Johor Bahru · by the Causeway</div>
+      <h1>New homes a short walk <em>from Singapore</em></h1>
+      <p>Joey Lee helps Singapore buyers find a home in JB. Start with two new launches beside the JB CIQ and the RTS Link to Woodlands.</p>
+    </div>
+    <div class="facts hfacts">
+      {projects.map(({ p, href, dev }) => (
+        <a href={href}>
+          <small>{dev} · {p.ready}</small>
+          <b class="serif">{p.name}</b>
+          <span>From {rm(p.priceFrom)} <i>≈ {sgd(p.priceFrom)}</i> · {p.beds} bed · {p.size} sq ft</span>
+        </a>
+      ))}
+      <div><a class="pill dark" href={wa(waText)} target="_blank" rel="noopener"><Icon name="wa" />WhatsApp Joey</a></div>
+    </div>
+    <div class="j-mfacts hm">
+      {projects.map(({ p, href }) => (<a href={href}><small>{p.name}</small><b>From {rm(p.priceFrom)}</b></a>))}
+    </div>
+  </section>
+
+  <section class="sec" id="projects">
+    <div class="head rv">
+      <div><div class="eyebrow"><span class="rule"></span>01 — Now selling</div><h2 class="h2">Two launches, both<br />by the CIQ</h2></div>
+      <p>Each page has the floor plans, the facilities, the developer's advertised prices and the way to and from Woodlands. Joey sends the latest price list on WhatsApp.</p>
+    </div>
+    <div class="projects">
+      {projects.map(({ p, href, dev, img, alt, blurb, near }) => (
+        <a class="pcard rv" href={href}>
+          <span class="dev">{dev}</span>
+          <div class="ph"><Picture src={img} alt={alt} widths={[600, 900, 1300]} sizes="(max-width:760px) 100vw, 46vw" formats={['avif', 'webp']} /></div>
+          <div class="tx">
+            <div class="eyebrow">{p.place}</div>
+            <h3>{p.name}</h3>
+            <p>{blurb}</p>
+            <div class="kv">
+              <div><small>From</small><b>{rm(p.priceFrom)}</b></div>
+              <div><small>Layouts</small><b>{p.beds} bed</b></div>
+              <div><small>Ready</small><b>{p.ready}</b></div>
+            </div>
+            <div class="kv">
+              <div><small>Size</small><b>{p.size} sf</b></div>
+              <div><small>Tenure</small><b>{p.tenure}</b></div>
+              <div><small>To CIQ</small><b>{near}</b></div>
+            </div>
+            <span class="go">See {p.name} <i>→</i></span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <div class="band px">
+    <div class="layer"><Picture src={ncs.img.night} alt="Johor Bahru's waterfront at night, artist's impression" widths={[960, 1600, 2560]} sizes="100vw" formats={['avif', 'webp']} /></div>
+    <div class="over"><div class="serif">Johor Bahru — Woodlands</div><div class="mono" style="opacity:.85">The RTS Link: one co-located customs clearance</div></div>
+  </div>
+
+  <section class="sec" id="how">
+    <div class="eyebrow"><span class="rule"></span>02 — How Joey helps</div>
+    <h2 class="h2">From Singapore, without the guesswork</h2>
+    <div class="steps">
+      <div class="rv"><i>01</i><b>Shortlist on WhatsApp</b><p>Tell Joey your budget and how you'll use the home. She sends the latest price lists and the floor plans that fit.</p></div>
+      <div class="rv"><i>02</i><b>See it in person</b><p>Joey books your visit to the sales gallery, in Johor Bahru or, for R&amp;F, in Singapore at Paya Lebar Square.</p></div>
+      <div class="rv"><i>03</i><b>Buy with the rules clear</b><p>Foreign buyers need State Authority consent and a minimum price. Joey tells you which units qualify before you choose.</p></div>
+    </div>
+  </section>
+
+  <section class="sec tight paper" id="faq">
+    <div class="eyebrow"><span class="rule"></span>03 — For Singapore buyers</div>
+    <h2 class="h2">Good to know</h2>
+    <div class="faq">
+      <details open>
+        <summary>Can Singaporeans buy these homes?</summary>
+        <div class="a"><p>Yes, with the Johor State Authority's consent. Foreign buyers also face a minimum purchase price, widely reported as RM1 million for apartments in Johor. Joey tells you which units qualify today.</p>
+        <a class="pill dark sm" href={wa("Hi Joey, I'm buying from Singapore. Which units can I buy?")} target="_blank" rel="noopener"><Icon name="wa" />Which units can I buy?</a></div>
+      </details>
+      <details>
+        <summary>Why the prices in RM and S$?</summary>
+        <div class="a"><p>Developers sell in ringgit. The S$ figures are a guide at today's rate ({fxNote()}), rounded to the nearest thousand.</p></div>
+      </details>
+      <details>
+        <summary>How do I get there from Singapore?</summary>
+        <div class="a"><p>Both projects are next to the JB CIQ, at the end of the Causeway, and by Bukit Chagar, the JB end of the RTS Link from Woodlands North. Each project page shows the way.</p></div>
+      </details>
+    </div>
+  </section>
+
+  <Agent waText={waText} />
+
+  <Fragment slot="fine">Renders are artist's impressions supplied by the developers and are subject to change. Prices are the developers' advertised ranges and may change without notice; ≈ {fxNote()}. Foreign purchase is subject to State Authority consent and Johor's minimum price for foreign buyers.</Fragment>
+  <Fragment slot="legal">
+    <Legal title="New Casa Suites: developer's particulars (R&F)" legal={ncs.legal} />
+    <Legal title="Causewayz Square: developer's particulars (Exsim)" legal={cws.legal} />
+  </Fragment>
+</Base>
+
+<style>
+  .hfacts{display:grid;grid-template-columns:1fr 1fr auto}
+  .hfacts > a{display:block;padding:1rem 1.2rem;border-right:1px solid var(--stone);text-decoration:none;color:inherit;transition:background-color .3s}
+  .hfacts > a:hover{background:var(--paper)}
+  .hfacts > a b{font:400 1.6rem/1.1 var(--fd);color:var(--ink);margin:.1rem 0 .25rem}
+  .hfacts > a span{font-size:.84rem;color:var(--mut-2)}
+  .hfacts > a i{font-style:normal;color:var(--bronze-ink);font-weight:600}
+  .hfacts > div{padding:1rem 1.1rem}
+  .hm{grid-template-columns:1fr 1fr}
+  .hm a{padding:.65rem .8rem;text-decoration:none;color:inherit;border-right:1px solid var(--stone)}
+  .hm a:last-child{border-right:0}
+  .hm b{font:400 1.05rem/1.2 var(--fd)}
+  .pcard .kv + .kv{border-top:0;margin-top:0}
+  @media (max-width:760px){ .hfacts{display:none} }
+</style>

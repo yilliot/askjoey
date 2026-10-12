@@ -1,0 +1,21 @@
+{
+  "name": "askjoey-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "fx": "node scripts/fx.mjs",
+    "grade": "bash scripts/grade.sh",
+    "dev": "astro dev --host",
+    "build": "node scripts/fx.mjs && astro build",
+    "preview": "astro preview --host"
+  },
+  "dependencies": {
+    "@fontsource-variable/hanken-grotesk": "^5.3.0",
+    "@fontsource-variable/newsreader": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "astro": "^7.3.8",
+    "gsap": "^3.15.0",
+    "lenis": "^1.3.26",
+    "sharp": "^0.35.5"
+  }
+}

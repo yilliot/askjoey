@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+# downloaded developer material stays local (large); FACTS.md files are tracked
+materials/**/*.pdf
+materials/**/brochure-pages/
+materials/**/images/
+docs/plan/**/.assets/

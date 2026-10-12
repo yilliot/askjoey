@@ -1,0 +1,31 @@
+---
+// The developer's advertised particulars (licence, permits, prices, tenure): required beside any price.
+import { rm } from '../lib/format';
+
+type Block = { name: string; permit: string; bp?: string; units?: number; min?: number; max?: number; sf?: string };
+interface Props {
+  title: string;
+  legal: {
+    developer: string; address?: string; licence: string; authority?: string; tenure?: string; encumbrance?: string;
+    completion?: string; blocks: Block[]; permitValid?: string; notes?: string;
+  };
+}
+const { title, legal: L } = Astro.props;
+const head = [
+  `Developer: ${L.developer}`, L.address, L.licence, L.authority && `Approving authority: ${L.authority}`,
+  L.tenure && `Land tenure: ${L.tenure}`, L.encumbrance && `Encumbrance: ${L.encumbrance}`,
+  L.completion && `Expected completion: ${L.completion}`, L.permitValid && `Advertising & sales permits valid ${L.permitValid}`,
+].filter(Boolean).join(' · ');
+---
+<details>
+  <summary>{title}</summary>
+  <div class="legal">
+    {head}.<br />
+    {L.blocks.map((b) => (
+      <>
+        <b>{b.name}</b> · A&amp;S permit {b.permit}{b.bp && ` · BP ref. ${b.bp}`}{b.units && ` · ${b.units.toLocaleString('en')} units`}{b.min && b.max && ` · ${rm(b.min)} – ${rm(b.max)}`}{b.sf && ` · ${b.sf} sq ft`}.<br />
+      </>
+    ))}
+    {L.notes}
+  </div>
+</details>

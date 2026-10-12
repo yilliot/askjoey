@@ -1,0 +1,27 @@
+---
+// The key facts, early: price, beds, baths, size, distance, tenure. Stays on screen through the hero.
+import Icon from './Icon.astro';
+import { rm, sgd, wa, fxNote } from '../lib/format';
+
+interface Props {
+  project: {
+    name: string; priceFrom: number; foreignFrom?: number; beds: string; baths: string; size: string;
+    tenure: string; ready: string; dist?: { label: string; value: string };
+  };
+}
+const { project: p } = Astro.props;
+const dist = p.dist ?? { label: 'Link bridge to CIQ', value: '650 m, covered' };
+---
+<div class="facts">
+  <div class="price">
+    <small>From</small><b>{rm(p.priceFrom)}</b>
+    <span class="sgd" title={fxNote()}>≈ {sgd(p.priceFrom)}</span>
+    {p.foreignFrom && <span class="fn">Singapore buyers from RM{p.foreignFrom / 1e6}M*</span>}
+  </div>
+  <div><small>Bedrooms</small><b>{p.beds}</b></div>
+  <div><small>Bathrooms</small><b>{p.baths}</b></div>
+  <div><small>Size</small><b>{p.size}<br />sq ft</b></div>
+  <div><small>{dist.label}</small><b>{dist.value}</b></div>
+  <div><small>Tenure · Ready</small><b>{p.tenure}<br />{p.ready}</b></div>
+  <div><a class="pill dark" href={wa(`Hi Joey, please send me the latest ${p.name} price list.`)} target="_blank" rel="noopener"><Icon name="wa" />Get the price list</a></div>
+</div>

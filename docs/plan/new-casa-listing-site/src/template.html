@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Joey's listing site — New Casa Suites · UI proposal v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500&family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300&family=Figtree:wght@400;500;600&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ── Images (R&F Phase 3 material, graded) — defined once, reused by var() ── */
+  :root{
+    --i-hero:url("{{hero}}");--i-hero-raw:url("{{hero_raw}}");--i-hero-g:url("{{hero_g}}");--i-hero-n:url("{{hero_n}}");
+    --i-hero-p:url("{{hero_p}}");--i-hero-pn:url("{{hero_pn}}");--i-day:url("{{day}}");--i-day-cp:url("{{day_cp}}");
+    --i-aerial:url("{{aerial}}");--i-night:url("{{night}}");--i-pool:url("{{pool}}");--i-skypark:url("{{skypark}}");--i-walkway:url("{{walkway}}");
+    --i-rts:url("{{rts}}");--i-family:url("{{family}}");--i-tennis:url("{{tennis}}");--i-gym:url("{{gym}}");--i-yoga:url("{{yoga}}");
+    --i-childcare:url("{{childcare}}");--i-badminton:url("{{badminton}}");
+    --i-plan-a:url("{{plan_A}}");--i-plan-b1:url("{{plan_B1}}");--i-plan-c:url("{{plan_C}}");--i-plan-d1:url("{{plan_D1}}");--i-plan-e:url("{{plan_E}}");
+    --i-logo:url("{{logo}}");
+  }
+
+  /* ── Proposed site tokens (direction A · Ivory Editorial, v2 type) ── */
+  :root{
+    --ivory:#F6F1E9; --paper:#FBF8F3; --white:#FFFFFF; --stone:#E6DED2; --stone-2:#D8CDBE;
+    --char:#2A2826; --ink:#141312; --mut:#6F6A63;
+    --bronze:#BC8C68;      /* sampled from the R&F logo */
+    --bronze-ink:#8A5F40;  /* bronze darkened for text on ivory (AA) */
+    --fd:'Newsreader',Georgia,serif;              /* display: headlines, prices, captions */
+    --ft:'Hanken Grotesk',system-ui,sans-serif;   /* text: body, labels, buttons, figures */
+    --fm:'IBM Plex Mono',ui-monospace,monospace;  /* micro-captions only */
+    --ease-silk:cubic-bezier(.22,1,.36,1);        /* entrances */
+    --ease-glide:cubic-bezier(.65,0,.35,1);       /* cross-fades, sheet moves */
+  }
+
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--ft);background:#EEE9E1;color:#2A2826;line-height:1.55;font-size:15px;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,h4{margin:0}
+  a{color:var(--bronze-ink)}
+  code{font:500 .84em var(--fm);background:rgb(255 255 255/.6);border:1px solid rgb(0 0 0/.06);border-radius:.3rem;padding:0 .3rem}
+
+  /* ── Proposal chrome (NOT part of the site) ── */
+  .proposal-bar{position:sticky;top:0;z-index:50;background:#1E1C1A;color:#F3EEE6;padding:.55rem 1.1rem;display:flex;gap:.4rem 1rem;align-items:center;flex-wrap:wrap;font-size:.84rem;min-height:46px}
+  .proposal-bar b{font-weight:600}
+  .proposal-bar .v{background:#BC8C68;color:#1E1C1A;border-radius:5px;padding:0 .35rem;font-weight:700;font-size:.72rem;margin-left:.35rem}
+  .proposal-bar .tabs{display:flex;gap:.3rem;margin-left:auto;flex-wrap:wrap}
+  .proposal-bar button{font:inherit;background:transparent;color:#F3EEE6;border:1px solid rgb(243 238 230/.3);border-radius:999px;padding:.24rem .72rem;cursor:pointer;white-space:nowrap}
+  .proposal-bar button.on{background:#F3EEE6;color:#1E1C1A;border-color:#F3EEE6}
+  .proposal-bar button.new::after{content:'new';font-size:.6rem;font-weight:700;color:#BC8C68;margin-left:.3rem;vertical-align:super}
+  .proposal-bar button.on.new::after{color:#8A5F40}
+  .state{display:none}.state.on{display:block}
+  .wrap{max-width:1240px;margin:0 auto;padding:1.5rem 1.25rem 1rem}
+  .lead{font-size:1.04rem;color:#4A4640;max-width:62rem}
+  .ph1{font:600 1.65rem/1.22 var(--ft);letter-spacing:-.01em;margin:.25rem 0 .6rem}
+  .ph2{font:600 1.12rem var(--ft);margin:2rem 0 .7rem}
+  .card{background:#FBF8F3;border:1px solid rgb(42 40 38/.08);border-radius:14px;padding:1.1rem 1.2rem}
+  .cols2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+  .cols3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+  .sub{color:#6F6A63;font-size:.86rem}
+  .tag{display:inline-block;font:600 .68rem var(--ft);letter-spacing:.06em;text-transform:uppercase;padding:.16rem .55rem;border-radius:999px;background:#E8E1D6;color:#5C564F}
+  .tag.rec{background:#1E1C1A;color:#F3EEE6}
+  .tag.open{background:#F4E6D6;color:#8A5F40}
+  .tag.set{background:#E2EBE3;color:#3D6150}
+  .tag.def{background:#E8E5E1;color:#6F6A63}
+  .tag.chg{background:#BC8C68;color:#1E1C1A}
+  .note{display:inline-flex;align-items:center;justify-content:center;width:1.3rem;height:1.3rem;border-radius:999px;background:#C2410C;color:#fff;font:700 .72rem var(--ft);vertical-align:middle;margin-left:.35rem;cursor:help;flex:none;box-shadow:0 0 0 3px rgb(255 255 255/.85);position:relative;z-index:7;letter-spacing:0;text-transform:none;font-style:normal}
+  .note.abs{position:absolute}
+  .notes{max-width:1240px;margin:1.2rem auto 3rem;padding:0 1.25rem}
+  .notes h3{font:600 1rem var(--ft);margin-bottom:.4rem}
+  .notes ol{margin:.4rem 0 0;padding-left:1.4rem;columns:2;column-gap:2.5rem}
+  .notes li{break-inside:avoid;margin-bottom:.55rem;font-size:.92rem}
+  .notes li::marker{font-weight:700;color:#C2410C}
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table.t{width:100%;border-collapse:collapse;font-size:.9rem}
+  table.t th{font:600 .72rem var(--ft);text-transform:uppercase;letter-spacing:.05em;color:#6F6A63;text-align:left;padding:.5rem .6rem;border-bottom:1px solid rgb(42 40 38/.2);white-space:nowrap}
+  table.t td{padding:.55rem .6rem;border-bottom:1px solid rgb(42 40 38/.07);vertical-align:top}
+  table.t td.num,table.t th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  table.t tr.hot td{background:rgb(188 140 104/.09)}
+  .flow{display:flex;gap:.5rem;align-items:stretch;flex-wrap:wrap;margin:.5rem 0}
+  .flow .st{flex:1 1 150px;background:#FBF8F3;border:1px solid rgb(42 40 38/.1);border-radius:12px;padding:.7rem .8rem;font-size:.86rem}
+  .flow .st b{display:block;font-size:.92rem;margin-bottom:.15rem}
+  .flow .ar{align-self:center;color:#B0A79B;font-size:1.2rem}
+  .kv{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem}
+  .kv div{background:#FBF8F3;border:1px solid rgb(42 40 38/.08);border-radius:12px;padding:.7rem .85rem}
+  .kv small{display:block;font:600 .66rem var(--ft);letter-spacing:.08em;text-transform:uppercase;color:#6F6A63}
+  .kv b{font:600 1.02rem var(--ft)}
+  .swatch{display:flex;gap:.35rem;flex-wrap:wrap}
+  .swatch span{display:inline-flex;align-items:flex-end;width:62px;height:46px;border-radius:8px;padding:4px 6px;font:500 .62rem var(--fm);border:1px solid rgb(0 0 0/.07)}
+  .changes{background:#1E1C1A;color:#EDE6DC;border-radius:14px;padding:1rem 1.2rem;margin:.4rem 0 1.2rem;font-size:.92rem}
+  .changes b{color:#fff}
+  .changes ul{margin:.4rem 0 0;padding-left:1.1rem}
+  .changes li{margin-bottom:.25rem}
+
+  /* ── Browser + phone frames (proposal chrome) ── */
+  .browser{max-width:1240px;margin:0 auto;border-radius:14px;overflow:clip;box-shadow:0 30px 70px -30px rgb(30 28 26/.45);background:#fff;border:1px solid rgb(0 0 0/.08)}
+  .browser .bar{display:flex;align-items:center;gap:.4rem;padding:.55rem .8rem;background:#E9E4DC;border-bottom:1px solid rgb(0 0 0/.06)}
+  .browser .bar i{width:10px;height:10px;border-radius:50%;background:#CFC6B9;display:block}
+  .browser .bar .url{margin-left:.8rem;flex:1;max-width:420px;background:#fff;border-radius:7px;padding:.18rem .7rem;font:500 .75rem var(--fm);color:#6F6A63}
+  .phones{display:flex;gap:1.6rem;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+  .phone{width:360px;max-width:100%;border-radius:44px;padding:11px;background:#1A1918;box-shadow:0 30px 60px -28px rgb(30 28 26/.6)}
+  .phone .screen{border-radius:34px;overflow:hidden;height:740px;position:relative;background:var(--ivory)}
+  .phone .scroll{height:100%;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+  .phone .scroll::-webkit-scrollbar{display:none}
+  .phone .notch{position:absolute;top:9px;left:50%;transform:translateX(-50%);width:96px;height:26px;border-radius:20px;background:#1A1918;z-index:60}
+  .phone-cap{text-align:center;font-size:.85rem;color:#6F6A63;margin-top:.6rem;max-width:360px}
+  .hint{display:flex;gap:.6rem;align-items:center;background:#FBF8F3;border:1px dashed #BC8C68;border-radius:12px;padding:.6rem .9rem;font-size:.88rem;color:#4A4640;margin-top:.8rem}
+
+  /* ════════════ THE SITE (direction A · Ivory Editorial) ════════════ */
+  .site{container-type:inline-size;background:var(--ivory);color:var(--char);font-family:var(--ft);font-size:16px;line-height:1.6;overflow:clip;position:relative}
+  .site .serif{font-family:var(--fd);font-weight:400;letter-spacing:-.012em}
+  .site .eyebrow{font:600 .7rem var(--ft);letter-spacing:.2em;text-transform:uppercase;color:var(--bronze-ink)}
+  .site .mono{font:400 .7rem var(--fm);letter-spacing:.03em}
+  .site .rule{display:inline-block;width:36px;height:1px;background:var(--bronze);vertical-align:middle;margin-right:.6rem}
+  .site .pill{display:inline-flex;align-items:center;gap:.5rem;border-radius:999px;padding:.74rem 1.2rem;font:600 .86rem var(--ft);text-decoration:none;border:1px solid transparent;white-space:nowrap;cursor:pointer}
+  .site .pill.dark{background:var(--ink);color:var(--paper)}
+  .site .pill.light{background:rgb(255 255 255/.94);color:var(--ink)}
+  .site .pill.line{border-color:rgb(42 40 38/.25);color:var(--char);background:transparent}
+  .site .pill.sm{padding:.5rem .9rem;font-size:.78rem}
+  .site .wa{width:16px;height:16px;flex:none}
+  .site .img{background-size:cover;background-position:center;background-color:#D9D0C3}
+  .site .cap{font:400 .66rem var(--fm);color:rgb(255 255 255/.88);position:absolute;left:14px;bottom:10px;letter-spacing:.03em}
+
+  /* nav */
+  .s-nav{position:absolute;inset:0 0 auto 0;z-index:8;display:flex;align-items:center;gap:2rem;padding:1.2rem 3cqw;color:#fff}
+  .s-brand{display:flex;flex-direction:column;line-height:1}
+  .s-brand .serif{font-size:1.5rem}
+  .s-brand small{font:600 .58rem var(--ft);letter-spacing:.22em;text-transform:uppercase;opacity:.85;margin-top:.35rem}
+  .s-links{display:flex;gap:1.6rem;margin-left:auto;font-size:.86rem;font-weight:500}
+  .s-links a{color:inherit;text-decoration:none}
+  .s-nav .pill.light{margin-left:.6rem}
+
+  /* key facts */
+  .s-facts{position:relative;z-index:6;background:var(--white);border-radius:18px;box-shadow:0 30px 60px -36px rgb(42 40 38/.5);display:grid;grid-template-columns:1.5fr repeat(5,1fr) auto;align-items:stretch}
+  .s-facts > div{padding:1.05rem 1.1rem;border-right:1px solid var(--stone)}
+  .s-facts > div:last-child{border-right:0;display:flex;align-items:center}
+  .s-facts small{display:block;font:600 .62rem var(--ft);letter-spacing:.15em;text-transform:uppercase;color:var(--mut);margin-bottom:.3rem}
+  .s-facts b{display:block;font:500 1.02rem/1.3 var(--ft);color:var(--ink);font-variant-numeric:tabular-nums}
+  .s-facts .price b{font:400 1.9rem/1 var(--fd);letter-spacing:-.01em}
+  .s-facts .sgd{font-size:.78rem;color:var(--bronze-ink);font-weight:600}
+  .s-facts .fn{font-size:.72rem;color:var(--mut)}
+
+  /* ── HERO JOURNEY: Woodlands → front door, pinned + scrubbed ── */
+  .j{position:relative;height:calc(var(--stage-h) * 4.2);view-timeline:--j block}
+  .browser .j{--stage-h:calc(100vh - 46px);--stage-top:46px}
+  .phone .j{--stage-h:740px;--stage-top:0px}
+  .j-stage{position:sticky;top:var(--stage-top);height:var(--stage-h);min-height:520px;overflow:hidden;background:var(--ivory)}
+  .phone .j-stage{min-height:0}
+  .j-map{position:absolute;inset:0;z-index:1;opacity:0}
+  .j-map svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .j-map .m-p{display:none}
+  .jt{font-family:var(--ft);font-weight:600;letter-spacing:.05em;fill:#2A2826}
+  .jt-s{font-family:var(--fd);fill:#141312}
+  .jt-m{font-family:var(--fm);fill:#6F6A63}
+  .jt-faint{fill:#9C9286}
+  .jt-cap{font-family:var(--ft);font-weight:600;letter-spacing:.3em;fill:#8A5F40}
+  .jb-lbl{fill:#8A5F40}
+  .jr{fill:none;stroke:#BC8C68;stroke-width:3.5;stroke-dasharray:1 1;stroke-dashoffset:0}
+  .jr-walk{fill:none;stroke:#BC8C68;stroke-width:2.2;stroke-dasharray:2 6;stroke-linecap:round}
+  .jp-ring{fill:none;stroke:#BC8C68;stroke-opacity:.5;stroke-width:1.5;transform-box:fill-box;transform-origin:center;animation:ring 2.4s var(--ease-silk) infinite}
+  @keyframes ring{from{transform:scale(.6);opacity:1}to{transform:scale(1.7);opacity:0}}
+  .jp{transform-box:fill-box;transform-origin:center}
+  .j-photo{position:absolute;inset:0;z-index:2;clip-path:inset(0% 0% 0% 0% round 0px)}
+  .j-photo i{position:absolute;inset:0;background:var(--i-hero) center 35%/cover}
+  .j-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgb(20 19 18/.42) 0%,rgb(20 19 18/0) 28%,rgb(20 19 18/0) 52%,rgb(20 19 18/.5) 100%)}
+  .j-title{position:absolute;left:3cqw;bottom:calc(22px + 104px + 7%);z-index:4;color:#fff;max-width:52cqw}
+  .j-title .eyebrow{color:#F1E6DA}
+  .j-title h1{font:400 clamp(3rem,6.4cqw,5.75rem)/1.02 var(--fd);letter-spacing:-.018em;margin:.8rem 0 .9rem}
+  .j-title h1 em{font-style:italic;color:#F3E3D2}
+  .j-title p{font-size:1.04rem;max-width:30rem;margin:0;opacity:.95}
+  .j-cue{display:flex;align-items:center;gap:.7rem;margin-top:1.4rem;font:500 .74rem var(--ft);letter-spacing:.14em;text-transform:uppercase;color:#F1E6DA}
+  .j-cue i{display:block;width:1px;height:34px;background:linear-gradient(#fff,transparent);transform-origin:top;animation:cue 2.2s var(--ease-silk) infinite}
+  @keyframes cue{0%{transform:scaleY(0)}60%{transform:scaleY(1);opacity:1}100%{transform:scaleY(1);opacity:0}}
+  .j-coord{position:absolute;right:3cqw;top:5.4rem;z-index:3;color:#fff;text-align:right;opacity:.85}
+  .j-cap{position:absolute;left:3.6cqw;top:16%;width:min(27cqw,330px);z-index:4}
+  .j-cap > div{background:rgb(251 248 243/.9);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-radius:16px;padding:1.05rem 1.2rem 1.15rem;box-shadow:0 18px 40px -28px rgb(42 40 38/.5)}
+  .j-cap .n{font:500 .68rem var(--fm);color:var(--bronze-ink);letter-spacing:.06em}
+  .j-cap h4{font:400 1.75rem/1.1 var(--fd);letter-spacing:-.01em;margin:.35rem 0 .45rem;color:var(--ink)}
+  .j-cap p{font-size:.9rem;line-height:1.5;color:#4A4640;margin:0}
+  .j-count{font:400 3.2rem/1 var(--fd);color:var(--ink);letter-spacing:-.02em;margin:.25rem 0 .35rem}
+  .j-count::after{content:' m';font-size:1.4rem;color:var(--mut)}
+  .j-rail{position:absolute;left:1.5cqw;top:16%;height:48%;width:2px;background:rgb(42 40 38/.12);z-index:4}
+  .j-rail i{display:block;height:100%;background:var(--bronze);transform-origin:top}
+  .j-plan{position:absolute;right:3cqw;top:12%;width:min(30cqw,360px);z-index:5;background:#fff;border-radius:18px;padding:1rem 1rem 1.1rem;box-shadow:0 30px 60px -30px rgb(0 0 0/.55)}
+  .j-plan .pl{height:min(24cqw,280px);background:var(--i-plan-c) center/contain no-repeat}
+  .j-plan h4{font:400 1.55rem/1.1 var(--fd);margin:.5rem 0 .15rem;color:var(--ink)}
+  .j .s-facts{position:absolute;left:3cqw;right:3cqw;bottom:22px;z-index:6}
+  .j-mfacts{display:none;position:absolute;left:12px;right:12px;bottom:80px;z-index:6;background:#fff;border-radius:14px;grid-template-columns:1.3fr 1fr 1fr;box-shadow:0 20px 40px -26px rgb(0 0 0/.5)}
+  .j-mfacts div{padding:.6rem .7rem;border-right:1px solid var(--stone)}
+  .j-mfacts div:last-child{border-right:0}
+  .j-mfacts small{display:block;font:600 .54rem var(--ft);letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+  .j-mfacts b{font:500 .82rem/1.25 var(--ft);color:var(--ink)}
+  .j-mfacts .p b{font:400 1.2rem/1 var(--fd)}
+  .j-mfacts .p span{display:block;font-size:.66rem;color:var(--bronze-ink);font-weight:600}
+  .j-skip{position:absolute;right:3cqw;bottom:calc(22px + 104px + 16px);z-index:6;font:500 .78rem var(--ft);color:#fff;text-decoration:none;letter-spacing:.04em}
+
+  /* sections */
+  .s-sec{padding:6.5rem 6cqw}
+  .s-sec.tight{padding-top:4.2rem}
+  .s-h2{font:400 clamp(2rem,3.9cqw,3.4rem)/1.06 var(--fd);letter-spacing:-.012em;margin:.75rem 0 0;color:var(--ink)}
+  .s-intro{display:grid;grid-template-columns:1fr 2.2fr;gap:4cqw;align-items:start}
+  .s-intro .big{font:400 clamp(1.4rem,2.3cqw,2.05rem)/1.32 var(--fd);color:var(--ink);margin:0;letter-spacing:-.005em}
+  .s-intro .big em{color:var(--bronze-ink)}
+  .s-stats{display:grid;grid-template-columns:repeat(4,1fr);margin-top:3.2rem;border-top:1px solid var(--stone-2)}
+  .s-stats div{padding:1.2rem 1rem 0 0}
+  .s-stats b{display:block;font:400 clamp(2rem,3.4cqw,3rem)/1 var(--fd);color:var(--ink);letter-spacing:-.02em}
+  .s-stats span{font-size:.84rem;color:var(--mut)}
+  .s-band{position:relative;height:min(42cqw,560px);min-height:300px;overflow:hidden}
+  .s-band .layer{position:absolute;inset:-12% 0;background-size:cover;background-position:center}
+  .s-band .over{position:absolute;inset:auto 6cqw 2.4rem 6cqw;color:#fff;display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;z-index:2}
+  .s-band::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgb(0 0 0/0) 45%,rgb(20 19 18/.5));pointer-events:none}
+  .s-band .over .serif{font-size:clamp(1.9rem,4.4cqw,4rem);line-height:1.02}
+
+  .s-res-head{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap}
+  .s-tabs{display:flex;gap:.4rem;flex-wrap:wrap;margin:2.4rem 0 1.6rem}
+  .s-tabs > span:not(.note){border:1px solid rgb(42 40 38/.2);border-radius:999px;padding:.5rem 1rem;font-size:.86rem;font-weight:500}
+  .s-tabs > span.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .s-tabs > span em{font-style:normal;opacity:.6;margin-left:.35rem;font-size:.76rem}
+  .s-unit{display:grid;grid-template-columns:1.05fr 1fr;background:var(--white);border-radius:20px;overflow:hidden}
+  .s-unit .plan{background:var(--paper) center/contain no-repeat;background-origin:content-box;padding:2rem;min-height:440px;border-right:1px solid var(--stone)}
+  .s-unit .info{padding:2.4rem 2.4rem 2rem}
+  .s-unit .info h3{font:400 2.3rem/1.05 var(--fd);letter-spacing:-.01em;color:var(--ink)}
+  .s-unit .info h3 small{font:500 .82rem var(--ft);color:var(--mut);margin-left:.6rem;letter-spacing:0}
+  .s-unit .tagline{font:italic 400 1.15rem var(--fd);color:var(--bronze-ink);margin:.45rem 0 1.4rem}
+  .s-spec{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--stone);border-bottom:1px solid var(--stone);margin-bottom:1.4rem}
+  .s-spec div{padding:.9rem 0}
+  .s-spec small{display:block;font:600 .6rem var(--ft);letter-spacing:.15em;text-transform:uppercase;color:var(--mut)}
+  .s-spec b{font-weight:500;font-size:1.12rem;color:var(--ink);font-variant-numeric:tabular-nums}
+  .s-alts{display:flex;gap:.35rem;flex-wrap:wrap;margin:.5rem 0 1.6rem}
+  .s-alts span{font:500 .75rem var(--ft);background:var(--ivory);border-radius:8px;padding:.35rem .55rem;color:var(--char)}
+  .s-alts span.on{background:var(--ink);color:var(--paper)}
+  .s-pricebox{display:flex;justify-content:space-between;align-items:center;gap:1rem;background:var(--ivory);border-radius:14px;padding:1rem 1.1rem;flex-wrap:wrap}
+  .s-pricebox b{font:400 1.4rem var(--fd)}
+  .s-summary{display:grid;grid-template-columns:repeat(5,1fr);gap:.6rem;margin-top:1rem}
+  .s-summary div{border-top:1px solid var(--stone-2);padding:.8rem 0}
+  .s-summary b{display:block;font:400 1.3rem var(--fd);color:var(--ink)}
+  .s-summary span{font-size:.8rem;color:var(--mut)}
+
+  .s-mosaic{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:240px 240px;gap:.7rem;margin-top:2.6rem}
+  .s-mosaic .img{border-radius:14px;position:relative;overflow:hidden}
+  .s-mosaic .big{grid-row:span 2}
+  .s-fac{display:grid;grid-template-columns:1fr 1fr;gap:3cqw;margin-top:2.4rem}
+  .s-fac ol{margin:0;padding:0;list-style:none;columns:2;column-gap:2rem;font-size:.88rem}
+  .s-fac li{padding:.42rem 0;border-bottom:1px solid var(--stone);break-inside:avoid;display:flex;gap:.6rem}
+  .s-fac li i{font:400 .68rem var(--fm);color:var(--bronze-ink);font-style:normal;padding-top:.2rem}
+
+  .s-dark{background:var(--ink);color:#F3EEE6}
+  .s-dark .eyebrow{color:var(--bronze)}
+  .s-dark .s-h2{color:inherit}
+  .s-loc{display:grid;grid-template-columns:1fr 1fr;gap:5cqw;align-items:center}
+  .s-route{list-style:none;margin:2rem 0 0;padding:0;position:relative}
+  .s-route::before{content:'';position:absolute;left:7px;top:10px;bottom:10px;width:1px;background:rgb(188 140 104/.5)}
+  .s-route li{position:relative;padding:.75rem 0 .75rem 2rem;display:flex;justify-content:space-between;gap:1rem;border-bottom:1px solid rgb(255 255 255/.08);font-size:.92rem}
+  .s-route li::before{content:'';position:absolute;left:3px;top:1.1rem;width:9px;height:9px;border-radius:50%;background:var(--ink);border:1px solid var(--bronze)}
+  .s-route li.home::before{background:var(--bronze)}
+  .s-route li span{color:#A9A196;font-size:.84rem;text-align:right}
+  .s-locimg{border-radius:18px;height:460px;position:relative;overflow:hidden}
+
+  .s-two{display:grid;grid-template-columns:1fr 1fr;gap:5cqw}
+  .s-list{list-style:none;padding:0;margin:1.4rem 0 0}
+  .s-list li{padding:.7rem 0;border-bottom:1px solid var(--stone);display:flex;justify-content:space-between;gap:1rem;font-size:.92rem}
+  .s-list li span{color:var(--mut)}
+  .s-logo{width:250px;height:46px;background:var(--i-logo) left center/contain no-repeat;margin-top:1.4rem}
+
+  .s-faq{margin-top:2rem;border-top:1px solid var(--stone-2)}
+  .s-faq details{border-bottom:1px solid var(--stone-2);padding:1.1rem 0}
+  .s-faq summary{list-style:none;display:flex;justify-content:space-between;gap:1rem;font:400 1.35rem/1.25 var(--fd);cursor:pointer;color:var(--ink)}
+  .s-faq summary::-webkit-details-marker{display:none}
+  .s-faq summary::after{content:'+';font-family:var(--ft);font-weight:300;color:var(--bronze-ink)}
+  .s-faq details[open] summary::after{content:'–'}
+  .s-faq p{margin:.6rem 0 0;max-width:46rem;font-size:.95rem;color:#4A4640}
+
+  .s-agent{display:grid;grid-template-columns:auto 1fr auto;gap:2.4rem;align-items:center;background:var(--white);border-radius:22px;padding:2.2rem 2.4rem}
+  .s-mono-ava{width:120px;height:120px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#E9D7C5,#BC8C68);display:grid;place-items:center;font:400 2.5rem var(--fd);color:#fff}
+  .s-agent h3{font:400 2.2rem/1 var(--fd);color:var(--ink)}
+  .s-agent .cta{display:flex;flex-direction:column;gap:.5rem}
+
+  .s-foot{background:#1B1A18;color:#BDB5AA;padding:3rem 6cqw 2.2rem;font-size:.8rem}
+  .s-foot .row{display:flex;justify-content:space-between;gap:2rem;flex-wrap:wrap;align-items:flex-start}
+  .s-foot b{color:#F1EBE2;font-weight:600}
+  .s-foot details{margin-top:1.6rem;border-top:1px solid rgb(255 255 255/.1);padding-top:1rem}
+  .s-foot summary{cursor:pointer;color:#E8DFD3;font-weight:500}
+  .s-foot .legal{font-size:.7rem;line-height:1.55;color:#958D82;margin-top:.6rem}
+  .s-fab{position:sticky;bottom:18px;margin:-70px 18px 18px auto;width:max-content;z-index:30;display:flex;align-items:center;gap:.5rem;background:var(--ink);color:#fff;border-radius:999px;padding:.75rem 1.1rem .75rem .85rem;font:600 .85rem var(--ft);box-shadow:0 14px 30px -10px rgb(0 0 0/.5)}
+
+  .s-bar{position:sticky;bottom:0;z-index:40;display:grid;grid-template-columns:1.4fr 1fr;gap:.5rem;padding:.6rem .7rem calc(.6rem + 8px);background:rgb(246 241 233/.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid rgb(42 40 38/.08)}
+  .s-bar .pill{justify-content:center;padding:.8rem .6rem}
+  .s-menu{position:absolute;inset:0;z-index:45;background:var(--ink);color:#F1EBE2;padding:5rem 1.6rem 2rem;display:flex;flex-direction:column}
+  .s-menu a.m{font:400 2.2rem/1.4 var(--fd);color:#fff;text-decoration:none;border-bottom:1px solid rgb(255 255 255/.08)}
+
+  /* ── motion: everything scroll-driven, CSS only in this demo ── */
+  @supports (animation-timeline: view()){
+    /* hero journey (ranges = % of the pinned scroll) */
+    .j-photo{animation:jphoto linear both;animation-timeline:--j;animation-range:contain 8% contain 86%}
+    .j-photo i{animation:jzoom linear both;animation-timeline:--j;animation-range:contain 0% contain 100%}
+    .j-title,.j-coord{animation:jout linear both;animation-timeline:--j;animation-range:contain 3% contain 12%}
+    .j .s-nav,.j-skip{animation:jnav linear both;animation-timeline:--j;animation-range:contain 8% contain 86%}
+    .j-map{animation:jmap linear both;animation-timeline:--j;animation-range:contain 10% contain 86%}
+    .j-rail i{animation:jrail linear both;animation-timeline:--j;animation-range:contain 14% contain 72%}
+    .site .jr-rts{animation:jdraw linear both;animation-timeline:--j;animation-range:contain 22% contain 42%}
+    .site .jr-bridge{animation:jdraw linear both;animation-timeline:--j;animation-range:contain 50% contain 64%}
+    .site .jr-mall{animation:jdraw linear both;animation-timeline:--j;animation-range:contain 66% contain 70%}
+    .site .jr-walk{animation:jfade linear both;animation-timeline:--j;animation-range:contain 44% contain 48%}
+    .site .jb-lbl{animation:jfade linear both;animation-timeline:--j;animation-range:contain 50% contain 54%}
+    .site .jp-wn{animation:jpin linear both;animation-timeline:--j;animation-range:contain 16% contain 20%}
+    .site .jp-bc{animation:jpin linear both;animation-timeline:--j;animation-range:contain 41% contain 44%}
+    .site .jp-ciq{animation:jpin linear both;animation-timeline:--j;animation-range:contain 46% contain 49%}
+    .site .jp-mall{animation:jpin linear both;animation-timeline:--j;animation-range:contain 63% contain 66%}
+    .site .jp-home{animation:jpin linear both;animation-timeline:--j;animation-range:contain 69% contain 73%}
+    .j-cap{animation:jcapin linear both;animation-timeline:--j}
+    .j-cap > div{animation:jcapout linear both;animation-timeline:--j}
+    .j-cap.c1{animation-range:contain 17% contain 21%}.j-cap.c1 > div{animation-range:contain 29% contain 32%}
+    .j-cap.c2{animation-range:contain 31% contain 34%}.j-cap.c2 > div{animation-range:contain 42% contain 45%}
+    .j-cap.c3{animation-range:contain 44% contain 47%}.j-cap.c3 > div{animation-range:contain 50% contain 52%}
+    .j-cap.c4{animation-range:contain 51% contain 54%}.j-cap.c4 > div{animation-range:contain 64% contain 66%}
+    .j-cap.c5{animation-range:contain 66% contain 69%}.j-cap.c5 > div{animation-range:contain 75% contain 78%}
+    .j-count{animation:jcount linear both;animation-timeline:--j;animation-range:contain 51% contain 64%;counter-reset:m var(--m)}
+    .j-count::before{content:counter(m)}
+    .j-plan{animation:jplan linear both;animation-timeline:--j;animation-range:contain 86% contain 96%}
+
+    /* the rest of the page */
+    .px .layer{animation:px linear both;animation-timeline:view();animation-range:cover}
+    .rv{animation:rv linear both;animation-timeline:view();animation-range:entry 0% cover 26%}
+    .rv-img{animation:rvimg linear both;animation-timeline:view();animation-range:entry 0% cover 35%}
+    .s-dark.morph{animation:morph linear both;animation-timeline:view();animation-range:entry 0% entry 70%}
+  }
+  @supports not (animation-timeline: view()){
+    .j{height:auto}.j-stage{position:relative}.j-map,.j-plan{display:none}
+    .j-count::before{content:'650'}
+  }
+  @property --m{syntax:'<integer>';inherits:false;initial-value:0}
+  @keyframes jphoto{0%{clip-path:inset(0% 0% 0% 0% round 0px)}15%{clip-path:inset(5% 3% 70% 76% round 16px)}82%{clip-path:inset(5% 3% 70% 76% round 16px)}100%{clip-path:inset(0% 0% 0% 0% round 0px)}}
+  @keyframes jphotoP{0%{clip-path:inset(0% 0% 0% 0% round 0px)}15%{clip-path:inset(6% 5% 70% 46% round 14px)}82%{clip-path:inset(6% 5% 70% 46% round 14px)}100%{clip-path:inset(0% 0% 0% 0% round 0px)}}
+  @keyframes jzoom{0%{transform:scale(1.08)}9%{transform:scale(1)}86%{transform:scale(1)}100%{transform:scale(1.07)}}
+  @keyframes jout{to{opacity:0;transform:translateY(-36px);filter:blur(8px)}}
+  @keyframes jnav{0%{color:#fff}13%{color:#2A2826}82%{color:#2A2826}100%{color:#fff}}
+  @keyframes jmap{0%{opacity:0}10.5%{opacity:1}86.8%{opacity:1}100%{opacity:0}}
+  @keyframes jrail{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+  @keyframes jdraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+  @keyframes jfade{from{opacity:0}to{opacity:1}}
+  @keyframes jpin{from{opacity:0;transform:scale(.55)}to{opacity:1;transform:scale(1)}}
+  @keyframes jcapin{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+  @keyframes jcapout{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-12px)}}
+  @keyframes jcount{from{--m:0}to{--m:650}}
+  @keyframes jplan{from{opacity:0;clip-path:inset(0 0 0 100% round 18px);transform:translateX(28px)}to{opacity:1;clip-path:inset(0 0 0 0 round 18px);transform:none}}
+  @keyframes px{from{transform:translateY(-7%)}to{transform:translateY(7%)}}
+  @keyframes rv{from{opacity:0;transform:translateY(26px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+  @keyframes rvimg{from{clip-path:inset(12% 8% 12% 8% round 18px);transform:scale(1.08)}to{clip-path:inset(0 0 0 0 round 14px);transform:none}}
+  @keyframes morph{from{background-color:var(--ivory);color:var(--char)}to{background-color:var(--ink);color:#F3EEE6}}
+  @media (prefers-reduced-motion:reduce){
+    .j{height:auto}.j-stage{position:relative}.j-map,.j-plan{display:none}
+    .j *,.px .layer,.rv,.rv-img,.s-dark.morph{animation:none!important}
+  }
+
+  /* ── the same site at phone width (container query) ── */
+  @container (max-width:640px){
+    .s-nav{padding:2.6rem 1.1rem 1rem;gap:.8rem}
+    .s-links{display:none}
+    .s-nav .pill.light{margin-left:auto}
+    .j-photo i{background-image:var(--i-hero-p);background-position:center 30%}
+    .j-photo{animation-name:jphotoP}
+    .j-map .m-d{display:none}.j-map .m-p{display:block}
+    .j-title{left:1.2rem;right:1.2rem;bottom:calc(80px + 64px + 1.6rem);max-width:none}
+    .j-title h1{font-size:3.3rem;margin:.55rem 0 .6rem}
+    .j-title p{font-size:.92rem}
+    .j-cue{margin-top:1rem}
+    .j-coord,.j-rail,.j-skip{display:none}
+    .j .s-facts{display:none}
+    .j-mfacts{display:grid}
+    .j-cap{left:12px;top:11.5%;width:47%}
+    .j-cap > div{padding:.75rem .8rem .85rem;border-radius:13px}
+    .j-cap h4{font-size:1.2rem}
+    .j-cap p{font-size:.76rem}
+    .j-count{font-size:2.2rem}
+    .j-count::after{font-size:1rem}
+    .j-plan{left:12px;right:12px;width:auto;top:15%}
+    .j-plan .pl{height:230px}
+    .s-facts{grid-template-columns:1fr 1fr;border-radius:16px}
+    .s-facts > div{border-right:0;border-bottom:1px solid var(--stone);padding:.85rem .95rem}
+    .s-facts > div:nth-child(even){border-right:1px solid var(--stone)}
+    .s-facts .price{grid-column:span 2}
+    .s-facts > div:last-child{grid-column:span 2;border-bottom:0;justify-content:center}
+    .s-sec{padding:3.6rem 1.25rem}
+    .s-intro{grid-template-columns:1fr;gap:1rem}
+    .s-stats{grid-template-columns:1fr 1fr;row-gap:1.2rem}
+    .s-band{height:300px}
+    .s-band .over{flex-direction:column;align-items:flex-start;left:1.25rem;right:1.25rem}
+    .s-tabs{flex-wrap:nowrap;overflow-x:auto;margin:1.6rem -1.25rem 1.2rem;padding:0 1.25rem;scrollbar-width:none}
+    .s-unit{grid-template-columns:1fr}
+    .s-unit .plan{min-height:300px;border-right:0;border-bottom:1px solid var(--stone);padding:1.2rem}
+    .s-unit .info{padding:1.4rem 1.2rem}
+    .s-unit .info h3{font-size:1.95rem}
+    .s-summary{grid-template-columns:1fr 1fr}
+    .s-mosaic{grid-template-columns:1fr 1fr;grid-template-rows:200px 130px 130px}
+    .s-mosaic .big{grid-column:span 2;grid-row:auto}
+    .s-mosaic .hide-sm{display:none}
+    .s-fac{grid-template-columns:1fr}
+    .s-fac ol{columns:1}
+    .s-loc,.s-two{grid-template-columns:1fr}
+    .s-locimg{height:240px}
+    .s-agent{grid-template-columns:1fr;padding:1.5rem 1.25rem;gap:1rem}
+    .s-mono-ava{width:72px;height:72px;font-size:1.6rem}
+    .s-agent h3{font-size:1.85rem}
+    .s-faq summary{font-size:1.15rem}
+    .s-foot{padding:2rem 1.25rem 6rem}
+  }
+
+  /* ── Look & feel mini-mocks ── */
+  .dir{display:flex;flex-direction:column;gap:.8rem}
+  .dir .mini{border-radius:26px;overflow:hidden;height:560px;position:relative;box-shadow:0 20px 50px -28px rgb(0 0 0/.55);border:8px solid #1A1918}
+  .dir h3{font:600 1.05rem var(--ft)}
+  .dir ul{margin:0;padding-left:1.1rem;font-size:.88rem}
+  .dir li{margin-bottom:.25rem}
+  .mA{background:var(--ivory);font-family:var(--ft)}
+  .mA .h{position:absolute;inset:0 0 auto 0;height:68%;background:var(--i-hero-p) center 30%/cover}
+  .mA .h::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgb(0 0 0/.3),transparent 25%,transparent 50%,var(--ivory))}
+  .mA .t{position:absolute;left:18px;right:18px;top:40%;z-index:2;color:#fff}
+  .mA .t small{font:600 .55rem var(--ft);letter-spacing:.2em;text-transform:uppercase;color:#F1E6DA}
+  .mA .t h4{font:400 2.45rem/1.02 var(--fd);letter-spacing:-.015em;margin:.35rem 0}
+  .mA .t h4 i{color:#F3E3D2}
+  .mA .f{position:absolute;left:12px;right:12px;bottom:64px;background:#fff;border-radius:14px;display:grid;grid-template-columns:1fr 1fr;font-size:.68rem;z-index:2}
+  .mA .f div{padding:.55rem .7rem;border-bottom:1px solid var(--stone)}
+  .mA .f div:nth-child(even){border-right:1px solid var(--stone)}
+  .mA .f small{display:block;font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+  .mA .f b{font-weight:500;font-size:.78rem}
+  .mA .f .p{grid-column:span 2}
+  .mA .f .p b{font:400 1.3rem var(--fd)}
+  .mA .bb{position:absolute;left:0;right:0;bottom:0;padding:9px;display:grid;grid-template-columns:1.4fr 1fr;gap:6px;background:rgb(246 241 233/.92)}
+  .mA .bb span{border-radius:999px;text-align:center;padding:.55rem;font:600 .7rem var(--ft)}
+  .mB{background:#141312;color:#EDE6DC;font-family:'Inter Tight'}
+  .mB .h{position:absolute;inset:0;background:var(--i-hero-pn) center 30%/cover;opacity:.85}
+  .mB .h::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgb(0 0 0/.2),rgb(0 0 0/0) 40%,#141312 88%)}
+  .mB .t{position:absolute;left:16px;right:16px;top:50px;z-index:2}
+  .mB .t .m{font:400 .55rem 'IBM Plex Mono';letter-spacing:.05em;opacity:.8;display:flex;justify-content:space-between}
+  .mB .t h4{font:500 3.1rem/.88 'Inter Tight';letter-spacing:-.045em;margin-top:13rem;text-transform:uppercase;color:#fff}
+  .mB .f{position:absolute;left:16px;right:16px;bottom:70px;display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem;z-index:2;border-top:1px solid rgb(255 255 255/.18);padding-top:.6rem}
+  .mB .f small{display:block;font:400 .5rem 'IBM Plex Mono';opacity:.6;text-transform:uppercase}
+  .mB .f b{font-weight:500;font-size:.85rem;color:#fff}
+  .mB .bb{position:absolute;left:16px;right:16px;bottom:16px;display:flex;justify-content:space-between;align-items:center;z-index:2;border:1px solid var(--bronze);padding:.6rem .8rem;font:500 .7rem 'IBM Plex Mono';color:var(--bronze);text-transform:uppercase}
+  .mC{background:#fff;font-family:'Manrope';color:#1A1A1A}
+  .mC .n{display:flex;justify-content:space-between;align-items:center;padding:30px 14px 0;font-size:.65rem;font-weight:600}
+  .mC .n span:last-child{background:#111;color:#fff;border-radius:999px;padding:.35rem .7rem}
+  .mC .t{text-align:center;padding:1.4rem 1rem .8rem}
+  .mC .t .chip{display:inline-block;font-size:.55rem;background:#F1F1EF;border-radius:999px;padding:.25rem .6rem}
+  .mC .t h4{font:600 1.75rem/1.08 'Manrope';letter-spacing:-.03em;margin:.6rem 0 .4rem}
+  .mC .t p{font-size:.68rem;color:#666;margin:0 0 .8rem}
+  .mC .t .b{display:inline-block;background:#111;color:#fff;border-radius:999px;padding:.45rem .9rem;font-size:.65rem;font-weight:600}
+  .mC .h{margin:0 10px;height:220px;border-radius:16px;background:var(--i-day-cp) center 40%/cover}
+  .mC .f{display:grid;grid-template-columns:repeat(3,1fr);text-align:center;padding:1rem .4rem}
+  .mC .f b{display:block;font-size:1.15rem;letter-spacing:-.02em}
+  .mC .f small{font-size:.55rem;color:#777}
+  .gradepair{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem}
+  .gradepair div{aspect-ratio:16/10;border-radius:10px;background-size:cover;background-position:center;position:relative}
+  .gradepair span{position:absolute;left:8px;bottom:8px;background:rgb(0 0 0/.6);color:#fff;font:500 .66rem var(--fm);border-radius:5px;padding:.15rem .4rem}
+
+  /* ── Type tab: pairings in context ── */
+  .tcs{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.1rem;margin-top:1.2rem}
+  .tc{background:var(--ivory);border-radius:16px;overflow:hidden;border:1px solid rgb(42 40 38/.08);display:flex;flex-direction:column}
+  .tc.recd{outline:3px solid #BC8C68;outline-offset:2px}
+  .tc .ph{aspect-ratio:16/10;background:var(--i-hero-g) center 35%/cover;position:relative;padding:1rem 1.1rem;display:flex;flex-direction:column;justify-content:flex-end;color:#fff}
+  .tc .ph::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgb(0 0 0/.05),rgb(0 0 0/.45))}
+  .tc .ph > *{position:relative}
+  .tc .ph small{font:600 .55rem var(--t);letter-spacing:.2em;text-transform:uppercase;opacity:.9}
+  .tc .ph h4{font-family:var(--d);font-weight:var(--dw,400);font-size:var(--hs,2.6rem);line-height:1.02;letter-spacing:var(--dl,-.015em);margin:.25rem 0 .3rem}
+  .tc .ph h4 i{font-style:italic}
+  .tc .ph p{font:400 .8rem/1.45 var(--t);margin:0;opacity:.95}
+  .tc .fx{display:grid;grid-template-columns:1.3fr 1fr 1fr;background:#fff;margin:-.0rem 0 0}
+  .tc .fx div{padding:.6rem .7rem;border-right:1px solid var(--stone)}
+  .tc .fx div:last-child{border-right:0}
+  .tc .fx small{display:block;font:600 .52rem var(--t);letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+  .tc .fx b{font:500 .82rem var(--t);color:var(--ink)}
+  .tc .fx .p b{font-family:var(--d);font-weight:var(--dw,400);font-size:1.25rem;line-height:1}
+  .tc .bd{padding:1rem 1.1rem 1.1rem}
+  .tc .bd h5{font-family:var(--d);font-weight:var(--dw,400);font-size:var(--h2s,1.55rem);line-height:1.08;letter-spacing:var(--dl,-.012em);margin:0 0 .45rem;color:var(--ink)}
+  .tc .bd p{font:400 .86rem/1.6 var(--t);margin:0;color:#4A4640}
+  .tc .meta{margin-top:auto;padding:.85rem 1.1rem 1rem;border-top:1px solid var(--stone);background:#FBF8F3;font-size:.84rem}
+  .tc .meta b{font-size:.9rem}
+  .scale{display:grid;grid-template-columns:auto 1fr auto;gap:.2rem 1.4rem;align-items:baseline;background:var(--ivory);border-radius:14px;padding:1.2rem 1.4rem}
+  .scale .k{font:500 .68rem var(--fm);color:var(--mut);white-space:nowrap}
+  .scale .s{color:var(--ink);overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  .scale .v{font:500 .68rem var(--fm);color:var(--bronze-ink);white-space:nowrap;text-align:right}
+
+  /* ── Motion tab: storyboard ── */
+  .sb{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1rem}
+  .sbf{margin:0}
+  .ms{position:relative;aspect-ratio:5/3;border-radius:12px;overflow:hidden;background:var(--ivory);container-type:inline-size;box-shadow:0 14px 30px -22px rgb(0 0 0/.55)}
+  .ms svg{position:absolute;inset:0;width:100%;height:100%}
+  .ms .ph{position:absolute;inset:0;background:var(--i-hero-g) center 35%/cover}
+  .ms .ph::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgb(0 0 0/.35),transparent 30%,transparent 55%,rgb(0 0 0/.4))}
+  .ms .ttl{position:absolute;left:4cqw;bottom:24cqw;color:#fff;font:400 7.4cqw/1 var(--fd);letter-spacing:-.015em}
+  .ms .ttl small{display:block;font:600 1.5cqw var(--ft);letter-spacing:.2em;text-transform:uppercase;margin-bottom:1.2cqw;color:#F1E6DA}
+  .ms .fb{position:absolute;left:3cqw;right:3cqw;bottom:2.6cqw;height:7cqw;background:#fff;border-radius:2cqw;display:flex;align-items:center;gap:3cqw;padding:0 2.4cqw;font:500 1.6cqw var(--ft);color:var(--ink);box-shadow:0 2cqw 4cqw -3cqw rgb(0 0 0/.5)}
+  .ms .fb b{font:400 2.6cqw var(--fd)}
+  .ms .cp{position:absolute;left:3.5cqw;top:15%;width:28cqw;background:rgb(251 248 243/.92);border-radius:1.6cqw;padding:1.6cqw 1.8cqw;box-shadow:0 2cqw 4cqw -3cqw rgb(0 0 0/.4)}
+  .ms .cp .n{font:500 1.2cqw var(--fm);color:var(--bronze-ink)}
+  .ms .cp h6{font:400 2.5cqw/1.1 var(--fd);margin:.6cqw 0 .5cqw;color:var(--ink)}
+  .ms .cp p{font:400 1.35cqw/1.45 var(--ft);margin:0;color:#4A4640}
+  .ms .cp .cnt{font:400 4.6cqw/1 var(--fd);color:var(--ink)}
+  .ms .win{position:absolute;inset:0;background:var(--i-hero-g) center 35%/cover}
+  .ms .pc{position:absolute;right:3cqw;top:10%;width:29cqw;background:#fff;border-radius:2cqw;padding:1.4cqw;box-shadow:0 3cqw 6cqw -3cqw rgb(0 0 0/.6)}
+  .ms .pc i{display:block;height:20cqw;background:var(--i-plan-c) center/contain no-repeat}
+  .ms .pc b{display:block;font:400 2.4cqw/1.1 var(--fd);margin-top:1cqw;color:var(--ink)}
+  .ms .pc span{font:500 1.3cqw var(--ft);color:var(--mut)}
+  .ms .rail{position:absolute;left:1.5cqw;top:16%;height:48%;width:2px;background:rgb(42 40 38/.12)}
+  .ms .rail i{display:block;background:#BC8C68;width:2px}
+  .sbf figcaption{padding:.6rem .1rem 0;font-size:.86rem;color:#4A4640}
+  .sbf figcaption b{display:block;font-size:.9rem;color:#1E1C1A}
+  .sbf figcaption code{font-size:.72rem}
+  .alt{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem}
+  .alt div{aspect-ratio:4/3;border-radius:10px;background-color:#E6DED2;position:relative;overflow:hidden}
+  .alt span{position:absolute;left:6px;bottom:6px;background:rgb(0 0 0/.6);color:#fff;font:500 .62rem var(--fm);border-radius:5px;padding:.1rem .35rem}
+  .ease{display:flex;gap:1rem;flex-wrap:wrap}
+  .ease figure{margin:0;background:#FBF8F3;border:1px solid rgb(42 40 38/.08);border-radius:12px;padding:.8rem 1rem;font-size:.82rem}
+  .ease svg{width:150px;height:110px;display:block}
+
+  /* contact tab */
+  .wa-chat{background:#E9E0D5;border-radius:18px;padding:1rem;font-size:.86rem;max-width:380px}
+  .wa-chat .hd{display:flex;gap:.6rem;align-items:center;background:#1E1C1A;color:#fff;margin:-1rem -1rem .9rem;padding:.75rem 1rem;border-radius:18px 18px 0 0}
+  .wa-chat .hd i{width:30px;height:30px;border-radius:50%;background:#7E8A93;display:block}
+  .wa-chat .msg{background:#fff;border-radius:10px 10px 10px 2px;padding:.55rem .7rem;margin:.4rem 3rem .4rem 0;box-shadow:0 1px 0 rgb(0 0 0/.06)}
+  .wa-chat .msg.me{background:#DDF3D0;border-radius:10px 10px 2px 10px;margin:.4rem 0 .4rem 3rem}
+  .wa-chat .t{display:block;text-align:right;font-size:.66rem;color:#7B766F}
+  .imglib{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:.6rem}
+  .imglib div{aspect-ratio:4/3;border-radius:10px;background-size:cover;background-position:center;position:relative}
+  .imglib div.ct{background-size:contain;background-repeat:no-repeat;background-color:#FBF8F3}
+  .imglib span{position:absolute;left:6px;bottom:6px;background:rgb(0 0 0/.62);color:#fff;font:500 .62rem var(--fm);border-radius:5px;padding:.1rem .35rem}
+
+  @media (max-width:900px){
+    .cols2,.cols3,.sb{grid-template-columns:1fr}
+    .kv{grid-template-columns:1fr 1fr}
+    .alt{grid-template-columns:1fr 1fr}
+    .notes ol{columns:1}
+    .gradepair{grid-template-columns:1fr}
+    .proposal-bar .tabs{margin-left:0;width:100%;flex-wrap:nowrap;overflow-x:auto;padding-bottom:.2rem}
+    .ph1{font-size:1.35rem}
+  }
+</style>
+</head>
+<body>
+
+<div class="proposal-bar">
+  <b>Joey's listing site · New Casa Suites</b><span class="v">v2</span>
+  <div class="tabs">
+    <button data-state="s0" class="on" onclick="show('s0')">Overview</button>
+    <button data-state="s1" onclick="show('s1')">Look</button>
+    <button data-state="s7" class="new" onclick="show('s7')">Type</button>
+    <button data-state="s8" class="new" onclick="show('s8')">Motion</button>
+    <button data-state="s2" onclick="show('s2')">Desktop</button>
+    <button data-state="s3" onclick="show('s3')">Phone</button>
+    <button data-state="s4" onclick="show('s4')">Contact</button>
+    <button data-state="s5" onclick="show('s5')">Content</button>
+    <button data-state="s6" onclick="show('s6')">Build</button>
+  </div>
+</div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="wa" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2.2A9.7 9.7 0 0 0 3.6 16.8L2.3 21.7l5-1.3A9.7 9.7 0 1 0 12 2.2Zm0 17.7c-1.5 0-2.9-.4-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 19.9Zm4.4-6c-.2-.1-1.4-.7-1.7-.8-.2-.1-.4-.1-.5.1l-.8.9c-.1.2-.3.2-.5.1a6.6 6.6 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.5-.4h-.5a.9.9 0 0 0-.6.3 2.7 2.7 0 0 0-.8 2c0 1.2.9 2.3 1 2.5.1.2 1.7 2.6 4.1 3.6 1.5.7 2.1.7 2.9.6.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1l-.4-.2Z"/></symbol>
+  <symbol id="ph" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M5 4h3l1.5 4-2 1.3a11 11 0 0 0 7.2 7.2L16 14.5l4 1.5v3a1.8 1.8 0 0 1-2 1.8A15.8 15.8 0 0 1 3.2 6 1.8 1.8 0 0 1 5 4Z"/></symbol>
+</svg>
+
+<!-- ══════════════════════ s0 · OVERVIEW ══════════════════════ -->
+<section id="s0" class="state on">
+<div class="wrap">
+  <span class="tag">UI proposal v2 · 12 Oct 2026 · from R&amp;F's Phase 3 brochures (rfmalaysia.com)</span>
+  <h1 class="ph1">A one-project site that sells New Casa Suites to Singapore buyers, and gets them talking to Joey on WhatsApp</h1>
+  <div class="changes"><b>What changed in v2</b> (after El's review of v1: "A is better, but the font seems stretched and not balanced")
+    <ul>
+      <li><b>Type:</b> the narrow Instrument Serif + Inter Tight pairing is replaced by <b>Newsreader + Hanken Grotesk</b>, both normal width, set smaller and with more air. The <i>Type</i> tab shows five pairings in context.</li>
+      <li><b>Motion:</b> a scroll plan for the whole page, and a new hero where scrolling follows the route <b>from Woodlands North to the front door</b>: RTS Link → CIQ → 650 m covered bridge → R&amp;F Mall → the unit's floor plan. See the <i>Motion</i> tab for the storyboard; it runs live on the <i>Desktop</i> and <i>Phone</i> tabs.</li>
+      <li>Decisions 3, 13 and 14 are new or changed.</li>
+    </ul>
+  </div>
+  <p class="lead">Joey Lee (REN 80914, IQI Realty) sells <b>New Casa Suites @ Mercu 3, R&amp;F Princess Cove, Phase 3</b>, on the Johor Bahru waterfront next to the CIQ. Buyers today get R&amp;F's own website and two bilingual (English/Chinese) PDFs. They are dense, and they send enquiries to R&amp;F's hotline rather than to Joey. The proposed site is in English and led by photography, with R&amp;F's branding. It shows the key facts in the first screen, tells the "closest to Singapore" story by scrolling, and every section ends in a WhatsApp message or call to Joey, already filled in.</p>
+
+  <h2 class="ph2">The facts the site leads with (from the official brochure)</h2>
+  <div class="kv">
+    <div><small>Price</small><b>RM640,178 – RM3,567,158</b><div class="sub">advertised range, blocks C1–C3</div></div>
+    <div><small>Bedrooms · baths</small><b>Studio – 4 bed · 1 – 3 bath</b><div class="sub">21 layout types</div></div>
+    <div><small>Size</small><b>313 – 1,555 sq ft</b><div class="sub">29.16 – 144.55 m²</div></div>
+    <div><small>Location</small><b>650 m covered link bridge to JB CIQ</b><div class="sub">RTS Link to Woodlands North</div></div>
+    <div><small>Tenure</small><b>Freehold</b><div class="sub">no encumbrance</div></div>
+    <div><small>Completion</small><b>30 Nov 2029</b><div class="sub">expected, all three blocks</div></div>
+    <div><small>Units now selling</small><b>2,259 in Stage A</b><div class="sub">C1 422 · C2 1,137 · C3 700</div></div>
+    <div><small>Developer</small><b>R&amp;F Development Sdn Bhd</b><div class="sub">licence 13578/05-2027/0392(A)</div></div>
+  </div>
+
+  <h2 class="ph2">Who does what</h2>
+  <div class="tw"><table class="t">
+    <tr><th>Who</th><th>What they need from the site</th><th>What they do</th></tr>
+    <tr><td><b>Singapore buyer</b><div class="sub">on a phone, mostly arriving from a WhatsApp/social link</div></td><td>Price, size, number of bedrooms, how far from Woodlands, whether a Singaporean can buy</td><td>Scrolls the route, checks a layout, then taps <b>WhatsApp Joey</b> with the unit type already in the message</td></tr>
+    <tr><td><b>Joey Lee</b><div class="sub">REN 80914 · IQI Realty Sdn Bhd</div></td><td>Enquiries arriving in her WhatsApp, saying which layout the buyer looked at</td><td>Sends the current price list and books a viewing at the JB gallery or the Singapore gallery (Paya Lebar Square)</td></tr>
+    <tr><td><b>R&amp;F Development</b></td><td>Correct particulars, their brand used properly</td><td>Source of prices, plans and permits; their consent covers the use of logo and renders</td></tr>
+    <tr><td><b>IQI Realty</b></td><td>Firm name and registration number on every page</td><td>Joey's agency; its advertising rules apply</td></tr>
+    <tr><td><b>Maintainer</b> (an agent on the Mini)</td><td>One content file</td><td>Updates prices, availability and the exchange rate; rebuilds and publishes. Joey sends changes on WhatsApp/Telegram, and nobody edits HTML.</td></tr>
+  </table></div>
+
+  <h2 class="ph2">The buyer's path through the page</h2>
+  <div class="flow">
+    <div class="st"><b>1 · Arrive</b>Dusk photo, the name, and the facts bar: price, bedrooms, bathrooms, size, distance to the CIQ.</div><div class="ar">→</div>
+    <div class="st"><b>2 · The route</b>Scrolling draws Woodlands → RTS → CIQ → 650 m bridge → home.</div><div class="ar">→</div>
+    <div class="st"><b>3 · Residences</b>Pick Studio … 4 bed → see the plan, size and bathrooms.</div><div class="ar">→</div>
+    <div class="st"><b>4 · Life &amp; answers</b>Sky Park, fittings, FAQ for Singaporeans.</div><div class="ar">→</div>
+    <div class="st" style="border-color:#BC8C68"><b>5 · WhatsApp Joey</b>A message already filled in with the layout. Calling is the alternative. Available on every screen.</div>
+  </div>
+
+  <h2 class="ph2">Decisions</h2>
+  <div class="tw"><table class="t">
+    <tr><th>#</th><th>Question</th><th>Options</th><th>Recommendation</th><th>Status</th></tr>
+    <tr class="hot"><td>1</td><td><b>Which project?</b> The brief says "R&amp;F, Exsim Causeway Square".</td><td>(a) One site for R&amp;F New Casa Suites · (b) Joey's portfolio: New Casa Suites + Exsim's <i>Causewayz Square @ JBCC</i> (a different developer, Jalan Lumba Kuda)</td><td>(a) now, R&amp;F-branded as asked. The content model lets a second project page be added later, but Exsim can't sit under R&amp;F's branding.</td><td><span class="tag open">open</span></td></tr>
+    <tr><td>2</td><td>Look &amp; feel</td><td>A Ivory Editorial · B Gallery Noir · C Sky Fade</td><td><b>A</b>, which El preferred in v1.</td><td><span class="tag set">settled (El)</span></td></tr>
+    <tr class="hot"><td>3</td><td><b>Fonts</b> <span class="tag chg">changed</span></td><td>Newsreader + Hanken Grotesk · Cormorant Garamond + Jost · DM Serif Display + DM Sans · Fraunces + Figtree · (v1: Instrument Serif + Inter Tight)</td><td><b>Newsreader + Hanken Grotesk</b>: normal-width letters, a calm serif for headlines and a plain grotesk for facts and buttons. See <i>Type</i>.</td><td><span class="tag open">open</span></td></tr>
+    <tr><td>4</td><td>The one accent colour</td><td>R&amp;F bronze <code>#BC8C68</code> (the logo) · New Casa slate blue <code>#5F8A9B</code> (brochure cover)</td><td>Bronze. It is R&amp;F's own mark and warm against ivory, and it draws the route line in the hero.</td><td><span class="tag open">open</span></td></tr>
+    <tr><td>5</td><td>Photo treatment</td><td>As supplied · warm editorial grade · noir</td><td>Warm editorial, applied to every image at build time.</td><td><span class="tag open">open</span></td></tr>
+    <tr class="hot"><td>6</td><td><b>Which price do Singaporeans see first?</b> Johor's minimum price for foreign buyers of apartments is widely reported as RM1M. The title is restricted: no sale to non-citizens without State consent. Studios start at RM640K.</td><td>"From RM640K" for everyone · "From RM1M for foreign buyers" · both</td><td>Both: the facts bar says "From RM640,178", and the line under it says "Singapore buyers: from RM1M, subject to State consent". Joey confirms before launch.</td><td><span class="tag open">open · needs Joey</span></td></tr>
+    <tr><td>7</td><td>Currency</td><td>RM only · RM with ≈ S$</td><td>RM, with "≈ S$" next to it. The rate is one setting, dated, and labelled indicative.</td><td><span class="tag open">open</span></td></tr>
+    <tr><td>8</td><td>How buyers reach Joey</td><td>WhatsApp + call · plus an enquiry form</td><td>WhatsApp (pre-filled) + call only. No form, so no inbox to watch and no personal data to store.</td><td><span class="tag open">open</span></td></tr>
+    <tr><td>9</td><td>Page structure</td><td>One long page with 5 anchors · several pages</td><td>One long page. Each of the 21 layouts gets a shareable link that opens its plan.</td><td><span class="tag open">open</span></td></tr>
+    <tr><td>10</td><td>Language</td><td>English</td><td>English only, as briefed.</td><td><span class="tag set">settled</span></td></tr>
+    <tr><td>11</td><td>Domain &amp; hosting</td><td>e.g. <code>askjoey.my</code> · static host</td><td>A static site on a free CDN with Singapore edge locations. Joey picks and owns the domain.</td><td><span class="tag def">deferred · Joey</span></td></tr>
+    <tr><td>12</td><td>Using R&amp;F's logo, renders and plans</td><td>Use them · use only Joey's own photos</td><td>Use them. Joey confirms she is authorised to market Phase 3 with R&amp;F's material.</td><td><span class="tag open">open · needs Joey</span></td></tr>
+    <tr class="hot"><td>13</td><td><b>What happens while scrolling the hero</b> <span class="tag chg">new</span></td><td>J1 The route (Woodlands → front door) · J2 Aerial zoom (strait → tower → plan) · J3 Parallax photo only (v1)</td><td><b>J1</b>. It tells the strongest selling point, closeness to Singapore, in about four flicks. The photo opens and closes the sequence, and a "Skip" link is always there.</td><td><span class="tag open">open</span></td></tr>
+    <tr><td>14</td><td>Motion library <span class="tag chg">new</span></td><td>GSAP ScrollTrigger + Lenis · CSS scroll-driven animations only</td><td>GSAP + Lenis on the live site (free for commercial use; works on every iPhone in use). This proposal page shows the same choreography in CSS only.</td><td><span class="tag open">open</span></td></tr>
+  </table></div>
+</div>
+</section>
+
+<!-- ══════════════════════ s1 · LOOK & FEEL ══════════════════════ -->
+<section id="s1" class="state">
+<div class="wrap">
+  <h1 class="ph1">Three directions; A was preferred in v1 and now carries the v2 fonts</h1>
+  <p class="lead">Each is shown as the first phone screen a buyer sees. All three use neutrals plus one accent and let the photography carry the page. <b>A</b> takes the ivory, the oversized headline and the figures row from Joey's Pinterest references and adds an editorial serif.</p>
+
+  <div class="cols3" style="margin-top:1.4rem">
+    <div class="dir">
+      <div class="mini mA">
+        <div class="h"></div>
+        <div class="t"><small>R&amp;F Princess Cove · Phase 3</small><h4>New Casa <i>Suites</i></h4><div style="font-size:.72rem;opacity:.94">Freehold homes a covered walk from the JB CIQ.</div></div>
+        <div class="f">
+          <div class="p"><small>From</small><b>RM640,178</b> <span style="font-size:.6rem;color:#8A5F40;font-weight:600">≈ S$197K</span></div>
+          <div><small>Bedrooms</small><b>Studio – 4</b></div><div><small>Baths</small><b>1 – 3</b></div>
+          <div><small>Size</small><b>313–1,555 sf</b></div><div><small>CIQ bridge</small><b>650 m</b></div>
+        </div>
+        <div class="bb"><span style="background:#141312;color:#fff">WhatsApp Joey</span><span style="border:1px solid rgb(0 0 0/.2)">Call</span></div>
+      </div>
+      <div><span class="tag rec">Chosen</span> <h3 style="display:inline;margin-left:.3rem">A · Ivory Editorial</h3></div>
+      <div class="swatch"><span style="background:#F6F1E9">F6F1E9</span><span style="background:#fff">FFFFFF</span><span style="background:#2A2826;color:#fff">2A2826</span><span style="background:#141312;color:#fff">141312</span><span style="background:#BC8C68;color:#fff">BC8C68</span></div>
+      <div style="font:400 1.5rem/1 var(--fd)">Newsreader <span style="font:500 .9rem var(--ft)">+ Hanken Grotesk</span></div>
+      <ul><li>Warm ivory, white, charcoal and black, with R&amp;F bronze as the only accent.</li><li>Sky fades into ivory (references 1 &amp; 2); large serif headline (reference 4); figures row (references 2 &amp; 3).</li></ul>
+    </div>
+    <div class="dir">
+      <div class="mini mB">
+        <div class="h"></div>
+        <div class="t"><div class="m"><span>1.46° N · 103.77° E</span><span>PHASE 3 / 2029</span></div><h4>New<br>Casa<br>Suites</h4></div>
+        <div class="f"><div><small>From</small><b>RM640K</b></div><div><small>Beds</small><b>Studio–4</b></div><div><small>CIQ bridge</small><b>650 m</b></div></div>
+        <div class="bb"><span>WhatsApp Joey</span><span>→</span></div>
+      </div>
+      <h3>B · Gallery Noir</h3>
+      <ul><li>Dark and architectural, close to the "Veranda" and "timeless" references.</li><li>It mutes R&amp;F's renders and is harder to read on a phone outdoors.</li></ul>
+    </div>
+    <div class="dir">
+      <div class="mini mC">
+        <div class="n"><span>New Casa Suites</span><span>WhatsApp</span></div>
+        <div class="t"><span class="chip">R&amp;F Princess Cove · Phase 3</span><h4>Live a short walk<br>from Singapore</h4><p>Freehold suites linked to JB CIQ and R&amp;F Mall.</p><span class="b">See layouts</span></div>
+        <div class="h"></div>
+        <div class="f"><div><b>RM640K</b><small>from</small></div><div><b>650 m</b><small>CIQ bridge</small></div><div><b>2029</b><small>completion</small></div></div>
+      </div>
+      <h3>C · Sky Fade</h3>
+      <ul><li>Closest to the "Stayli" and "Aeron" references: white, centred headline, pill buttons, rounded image cards.</li><li>Clean, but it looks like a template.</li></ul>
+    </div>
+  </div>
+
+  <h2 class="ph2">Photo treatment: same render, three grades</h2>
+  <div class="gradepair">
+    <div style="background-image:var(--i-hero-raw)"><span>as supplied by R&amp;F</span></div>
+    <div style="background-image:var(--i-hero-g);outline:3px solid #BC8C68;outline-offset:2px"><span>warm editorial · recommended</span></div>
+    <div style="background-image:var(--i-hero-n)"><span>noir (direction B)</span></div>
+  </div>
+  <p class="sub" style="margin-top:.6rem">Warm editorial: saturation −22%, warmer midtones, lifted blacks, softened highlights. Baked in at build time, so the renders and lifestyle photos look like one shoot.</p>
+</div>
+</section>
+
+<!-- ══════════════════════ s7 · TYPE ══════════════════════ -->
+<section id="s7" class="state">
+<div class="wrap">
+  <h1 class="ph1">Type: why v1 looked stretched, and five pairings in context</h1>
+  <p class="lead">v1 set <b>Instrument Serif</b>, a <i>condensed</i> display face with tall, narrow letters, at about 100 px with very tight line spacing. Next to it was <b>Inter Tight</b>, a narrowed Inter. Both were narrow, so the page looked pulled upward and the headline overpowered everything under it. v2 uses faces of normal width, a headline about 20% smaller, and a regular step between sizes (×1.33).</p>
+
+  <div class="tcs">
+    <div class="tc" style="--d:'Instrument Serif',serif;--t:'Inter Tight',sans-serif;--hs:2.9rem;--dl:-.01em">
+      <div class="ph"><small>R&amp;F Princess Cove · Phase 3</small><h4>New Casa <i>Suites</i></h4><p>Freehold homes a covered walk from the JB CIQ.</p></div>
+      <div class="fx"><div class="p"><small>From</small><b>RM640,178</b></div><div><small>Bedrooms</small><b>Studio – 4</b></div><div><small>Size</small><b>313–1,555 sf</b></div></div>
+      <div class="bd"><h5>Studio to four bedrooms, 21 layouts</h5><p>Every home comes with a digital lockset, a water heater and a built-in kitchen with hood and hob.</p></div>
+      <div class="meta"><span class="tag">v1 · today</span><br><b>Instrument Serif + Inter Tight</b><br>Both condensed. Elegant in a single word, but whole headlines look stretched, and the tight sans makes the figures feel cramped.</div>
+    </div>
+
+    <div class="tc recd" style="--d:'Newsreader',serif;--t:'Hanken Grotesk',sans-serif;--dw:400;--hs:2.45rem">
+      <div class="ph"><small>R&amp;F Princess Cove · Phase 3</small><h4>New Casa <i>Suites</i></h4><p>Freehold homes a covered walk from the JB CIQ.</p></div>
+      <div class="fx"><div class="p"><small>From</small><b>RM640,178</b></div><div><small>Bedrooms</small><b>Studio – 4</b></div><div><small>Size</small><b>313–1,555 sf</b></div></div>
+      <div class="bd"><h5>Studio to four bedrooms, 21 layouts</h5><p>Every home comes with a digital lockset, a water heater and a built-in kitchen with hood and hob.</p></div>
+      <div class="meta"><span class="tag rec">Recommended</span><br><b>Newsreader + Hanken Grotesk</b><br>Magazine-style serif with an optical-size axis: refined at headline size, sturdy at caption size, and an italic that is easy to read. The grotesk is plain and normal width, with clear figures for prices and sizes. Calm and premium, and readable on a phone.</div>
+    </div>
+
+    <div class="tc" style="--d:'Cormorant Garamond',serif;--t:'Jost',sans-serif;--dw:500;--hs:2.75rem;--h2s:1.75rem">
+      <div class="ph"><small>R&amp;F Princess Cove · Phase 3</small><h4>New Casa <i>Suites</i></h4><p>Freehold homes a covered walk from the JB CIQ.</p></div>
+      <div class="fx"><div class="p"><small>From</small><b>RM640,178</b></div><div><small>Bedrooms</small><b>Studio – 4</b></div><div><small>Size</small><b>313–1,555 sf</b></div></div>
+      <div class="bd"><h5>Studio to four bedrooms, 21 layouts</h5><p>Every home comes with a digital lockset, a water heater and a built-in kitchen with hood and hob.</p></div>
+      <div class="meta"><b>Cormorant Garamond + Jost</b><br>The classic "five-star hotel" pairing: a high-contrast Garamond with a geometric sans (Futura-like). Luxurious, but the serif's small x-height makes it spindly on phones and it is very common in property marketing.</div>
+    </div>
+
+    <div class="tc" style="--d:'DM Serif Display',serif;--t:'DM Sans',sans-serif;--hs:2.35rem;--dl:-.01em;--h2s:1.45rem">
+      <div class="ph"><small>R&amp;F Princess Cove · Phase 3</small><h4>New Casa <i>Suites</i></h4><p>Freehold homes a covered walk from the JB CIQ.</p></div>
+      <div class="fx"><div class="p"><small>From</small><b>RM640,178</b></div><div><small>Bedrooms</small><b>Studio – 4</b></div><div><small>Size</small><b>313–1,555 sf</b></div></div>
+      <div class="bd"><h5>Studio to four bedrooms, 21 layouts</h5><p>Every home comes with a digital lockset, a water heater and a built-in kitchen with hood and hob.</p></div>
+      <div class="meta"><b>DM Serif Display + DM Sans</b><br>Wide and heavy, a sibling pair that matches by design. Punchy headlines and very legible, but louder and less refined, closer to a lifestyle magazine than a premium residence. Only one weight.</div>
+    </div>
+
+    <div class="tc" style="--d:'Fraunces',serif;--t:'Figtree',sans-serif;--dw:300;--hs:2.45rem;--h2s:1.5rem">
+      <div class="ph"><small>R&amp;F Princess Cove · Phase 3</small><h4>New Casa <i>Suites</i></h4><p>Freehold homes a covered walk from the JB CIQ.</p></div>
+      <div class="fx"><div class="p"><small>From</small><b>RM640,178</b></div><div><small>Bedrooms</small><b>Studio – 4</b></div><div><small>Size</small><b>313–1,555 sf</b></div></div>
+      <div class="bd"><h5>Studio to four bedrooms, 21 layouts</h5><p>Every home comes with a digital lockset, a water heater and a built-in kitchen with hood and hob.</p></div>
+      <div class="meta"><b>Fraunces (light) + Figtree</b><br>Warm and soft, with a slightly playful old-style serif and a friendly sans. Approachable for families, but less "R&amp;F premium", and its quirks show at large sizes.</div>
+    </div>
+  </div>
+
+  <h2 class="ph2">The recommended scale: Newsreader for display, Hanken Grotesk for text</h2>
+  <div class="scale">
+    <span class="k">Hero</span><span class="s" style="font:400 3.6rem/1.02 var(--fd);letter-spacing:-.018em">New Casa <i>Suites</i></span><span class="v">92 / 54 px · lh 1.02</span>
+    <span class="k">Section</span><span class="s" style="font:400 2.3rem/1.06 var(--fd);letter-spacing:-.012em">The closest you can live to Singapore</span><span class="v">54 / 34 · lh 1.06</span>
+    <span class="k">Lead</span><span class="s" style="font:400 1.55rem/1.3 var(--fd)">A <em style="color:#8A5F40">650-metre covered bridge</em> leads to the CIQ.</span><span class="v">32 / 22 · lh 1.32</span>
+    <span class="k">Price</span><span class="s" style="font:400 1.9rem/1 var(--fd)">RM640,178 <span style="font:600 .8rem var(--ft);color:#8A5F40">≈ S$197,000</span></span><span class="v">30 · tabular</span>
+    <span class="k">Body</span><span class="s" style="font:400 1rem/1.6 var(--ft)">Every home comes with a digital lockset, a water heater and a built-in kitchen.</span><span class="v">17 / 16 · lh 1.6</span>
+    <span class="k">Figures</span><span class="s" style="font:500 1.05rem var(--ft);font-variant-numeric:tabular-nums">Studio – 4 · 1 – 3 bath · 313 – 1,555 sq ft</span><span class="v">17 · 500</span>
+    <span class="k">Label</span><span class="s" style="font:600 .7rem var(--ft);letter-spacing:.2em;text-transform:uppercase;color:#8A5F40">R&amp;F Princess Cove · Phase 3</span><span class="v">11.5 · +0.2em</span>
+    <span class="k">Caption</span><span class="s" style="font:400 .72rem var(--fm)">Swimming pool · Level 6 · artist's impression</span><span class="v">11 · Plex Mono</span>
+  </div>
+  <p class="sub" style="margin-top:.6rem">Sizes are desktop / phone. Newsreader's optical sizing switches on by itself: the hero uses its display master (finer contrast), captions use the text master. Both families are free (Google Fonts, SIL OFL), self-hosted and subset to Latin, about 90 KB in total.</p>
+</div>
+</section>
+
+<!-- ══════════════════════ s8 · MOTION ══════════════════════ -->
+<section id="s8" class="state">
+<div class="wrap">
+  <h1 class="ph1">Motion: scroll from Woodlands to the front door</h1>
+  <p class="lead">The hero stays pinned for about four screens of scrolling, and the scroll drives a short film. The photograph shrinks into a window, the map draws the commute from Singapore, and the photograph opens again on the home with its floor plan. Everything follows the scroll, at the buyer's pace: nothing autoplays and nothing takes over the page. It runs live on the <i>Desktop</i> and <i>Phone</i> tabs.</p>
+  <div class="hint">▶ To see it moving, open <b>Desktop</b> or <b>Phone</b> in Safari 26+ or Chrome and scroll slowly. In other browsers the page shows a still hero, which is the same fallback the live site gives to reduced-motion users.</div>
+
+  <h2 class="ph2">J1 · The route <span class="tag rec">recommended</span></h2>
+  <div class="sb">
+    <figure class="sbf"><div class="ms"><div class="ph"></div><div class="ttl"><small>Johor Bahru · Tanjung Puteri</small>New Casa <i>Suites</i></div><div class="fb"><b>RM640,178</b> Studio – 4 bed · 1 – 3 bath · 313 – 1,555 sq ft · 650 m to CIQ</div></div>
+      <figcaption><b>0 – 8% · Arrive</b>Full-bleed dusk photo, the name, the facts bar. A small "Scroll · from Woodlands to your front door" cue pulses. The photo settles from 108% to 100%.</figcaption></figure>
+    <figure class="sbf"><div class="ms">{{SVG:desk:f2}}<div class="win" style="clip-path:inset(5% 3% 70% 76% round 8px)"></div><div class="rail"><i style="height:10%"></i></div><div class="cp"><div class="n">01 / 05</div><h6>Start at Woodlands North</h6><p>Singapore's RTS terminal, on the Thomson–East Coast Line.</p></div><div class="fb"><b>RM640,178</b> Studio – 4 bed · 313 – 1,555 sq ft</div></div>
+      <figcaption><b>8 – 22% · Lift off</b>The title rises and blurs away. The photo shrinks into a window top-right, which becomes the destination. The ivory map fades in underneath, and the Woodlands North pin drops. The facts bar stays.</figcaption></figure>
+    <figure class="sbf"><div class="ms">{{SVG:desk:f3}}<div class="win" style="clip-path:inset(5% 3% 70% 76% round 8px)"></div><div class="rail"><i style="height:45%"></i></div><div class="cp"><div class="n">02 / 05</div><h6>Cross on the RTS Link</h6><p>Clear both customs once, at a co-located station. Up to 10,000 passengers an hour each way.</p></div><div class="fb"><b>RM640,178</b> Studio – 4 bed · 313 – 1,555 sq ft</div></div>
+      <figcaption><b>22 – 44% · The crossing</b>The bronze line draws across the Straits at the speed of the scroll. Caption cards swap with a 12 px rise and fade, and the progress rail on the left fills.</figcaption></figure>
+    <figure class="sbf"><div class="ms">{{SVG:desk:f4}}<div class="win" style="clip-path:inset(5% 3% 70% 76% round 8px)"></div><div class="rail"><i style="height:72%"></i></div><div class="cp"><div class="n">04 / 05</div><div class="cnt">455 m</div><p>The last 650 m under cover: the link bridge from the CIQ.</p></div><div class="fb"><b>RM640,178</b> Studio – 4 bed · 313 – 1,555 sq ft</div></div>
+      <figcaption><b>44 – 66% · The last 650 m</b>Bukit Chagar and the CIQ pins land, then the covered bridge draws while a counter runs 0 → 650 m, tied to the scroll.</figcaption></figure>
+    <figure class="sbf"><div class="ms">{{SVG:desk:f5}}<div class="win" style="clip-path:inset(5% 3% 70% 76% round 8px)"></div><div class="rail"><i style="height:100%"></i></div><div class="cp"><div class="n">05 / 05</div><h6>Through R&amp;F Mall, home</h6><p>A covered link bridge joins R&amp;F Mall to New Casa Suites.</p></div><div class="fb"><b>RM640,178</b> Studio – 4 bed · 313 – 1,555 sq ft</div></div>
+      <figcaption><b>66 – 78% · Arrive home</b>R&amp;F Mall, then the New Casa Suites pin with a slow bronze pulse beside the photo window.</figcaption></figure>
+    <figure class="sbf"><div class="ms"><div class="ph"></div><div class="pc"><i></i><b>Type C · Cozy Haven</b><span>2 bed · 2 bath · 781 sq ft</span></div><div class="fb"><b>RM640,178</b> Studio – 4 bed · 313 – 1,555 sq ft · 650 m to CIQ</div></div>
+      <figcaption><b>78 – 100% · Your home</b>The window opens back to full screen with a gentle push-in (100 → 107%), and a floor-plan card wipes in from the right with "Ask about Type C". Then the pin releases and the page scrolls on to Residences.</figcaption></figure>
+  </div>
+  <p class="sub" style="margin-top:.8rem">The map is schematic, not to scale, and drawn in the site's own palette. The order of stops follows R&amp;F's own journey diagram in the brochure: sky bridge → JB CIQ → RTS station → Woodlands North. No travel times are claimed. On a phone the same film runs on a portrait map: Singapore at the bottom, Johor Bahru at the top, the window top-right.</p>
+
+  <h2 class="ph2">Alternatives considered</h2>
+  <div class="cols2">
+    <div class="card">
+      <b>J2 · Aerial zoom</b> <span class="sub">all photography, no map</span>
+      <div class="alt" style="margin:.7rem 0">
+        <div style="background:var(--i-aerial) center/cover"><span>strait</span></div>
+        <div style="background:var(--i-aerial) 52% 62%/320% auto no-repeat"><span>zoom ×3</span></div>
+        <div style="background:var(--i-hero-g) center 35%/cover"><span>tower</span></div>
+        <div style="background:#FBF8F3 var(--i-plan-c) center/contain no-repeat"><span>plan</span></div>
+      </div>
+      <div class="sub">A continuous push-in from the Causeway aerial to the towers, a cross-fade to the render, then the plan. Very photographic, but the aerial goes soft at 3× zoom, the route isn't explained, and R&amp;F's labelled aerials carry Chinese text.</div>
+    </div>
+    <div class="card">
+      <b>J3 · Parallax photo only</b> <span class="sub">v1</span>
+      <div class="alt" style="margin:.7rem 0;grid-template-columns:1fr"><div style="aspect-ratio:16/5;background:var(--i-hero-g) center 35%/cover"><span>photo moves at 85% of scroll speed</span></div></div>
+      <div class="sub">Safe and quick to build. But the hero says nothing about the commute, the reason Singaporeans buy here, until much further down the page.</div>
+    </div>
+  </div>
+
+  <h2 class="ph2">The motion system for the rest of the page</h2>
+  <div class="tw"><table class="t">
+    <tr><th>Element</th><th>Trigger</th><th>What moves</th><th>Timing</th><th>Phone</th><th>Reduced motion</th></tr>
+    <tr class="hot"><td><b>Hero journey</b></td><td>Pinned, scrubbed by scroll</td><td>Photo → window → route draws → photo returns → plan wipes in</td><td>4.2 screens desktop · 4 phone; smoothed scroll</td><td>Portrait map, same acts</td><td>Still hero; the route appears in Location</td></tr>
+    <tr><td>Nav</td><td>Scroll direction</td><td>Hides on scroll down, returns on scroll up; turns from white text on the photo to charcoal on ivory</td><td>450 ms silk</td><td>Same</td><td>Instant</td></tr>
+    <tr><td>Headings &amp; text</td><td>Entering view</td><td>Rise 26 px, fade in, 6 px blur → sharp; lines stagger 70 ms</td><td>900 ms silk</td><td>600 ms, no blur</td><td>None</td></tr>
+    <tr><td>Images</td><td>Entering view</td><td>Curtain: clip-path inset 12% → 0 with a settle from 108% → 100%</td><td>Over the first 35% of entry</td><td>Same</td><td>None</td></tr>
+    <tr><td>Photo bands</td><td>In view</td><td>Parallax ±7%</td><td>Scrubbed</td><td>±3%</td><td>None</td></tr>
+    <tr><td>Location section</td><td>Crossing into it</td><td>Background melts ivory → black and text charcoal → ivory, instead of a hard edge</td><td>Over 70% of entry</td><td>Same</td><td>Hard switch</td></tr>
+    <tr><td>Key figures</td><td>Entering view</td><td>Count up: 650 m · 10,000 · 2,259</td><td>1.2 s silk</td><td>Same</td><td>Final value</td></tr>
+    <tr><td>Residences tabs</td><td>Tap</td><td>Plan cross-fades and slides 12 px; size chips re-flow</td><td>450 ms glide</td><td>Same</td><td>150 ms fade</td></tr>
+    <tr><td>Open a floor plan</td><td>Tap</td><td>View Transition: the card grows into a full-screen sheet</td><td>600 ms silk</td><td>Bottom sheet</td><td>Instant</td></tr>
+    <tr><td>WhatsApp button</td><td>After the hero</td><td>Rises in once, then stays put</td><td>450 ms silk</td><td>Bottom bar, label follows the layout in view</td><td>Instant</td></tr>
+  </table></div>
+
+  <h2 class="ph2">Two curves, used everywhere</h2>
+  <div class="ease">
+    <figure><svg viewBox="-8 -8 116 116"><rect x="0" y="0" width="100" height="100" fill="none" stroke="#E6DED2"/><path d="M0,100 C22,0 36,0 100,0" fill="none" stroke="#BC8C68" stroke-width="3"/></svg><b>Silk</b> <code>cubic-bezier(.22,1,.36,1)</code><br><span class="sub">entrances: fast start, long soft landing</span></figure>
+    <figure><svg viewBox="-8 -8 116 116"><rect x="0" y="0" width="100" height="100" fill="none" stroke="#E6DED2"/><path d="M0,100 C65,100 35,0 100,0" fill="none" stroke="#2A2826" stroke-width="3"/></svg><b>Glide</b> <code>cubic-bezier(.65,0,.35,1)</code><br><span class="sub">cross-fades and sheets: even in and out</span></figure>
+    <figure style="flex:1;min-width:240px"><b>Rules</b><ul style="margin:.3rem 0 0;padding-left:1.1rem"><li>Only transform, opacity and clip-path move, so it stays at 60 fps on a mid-range phone.</li><li>Scroll is smoothed (Lenis, desktop only); iPhone keeps its native momentum scrolling.</li><li>The pinned hero never traps anyone: "Skip the journey ↓", keyboard and Page Down pass straight through.</li><li>Reduced motion means a still page with the same content.</li></ul></figure>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════ s2 · HOME DESKTOP ══════════════════════ -->
+<section id="s2" class="state">
+<div class="wrap">
+  <h1 class="ph1">Home, desktop: direction A with v2 type and the route hero</h1>
+  <p class="lead">Scroll slowly through the hero: it stays pinned while the route draws from Woodlands North to the front door, then releases into the page. Further down, photos move at a slower speed than the page, sections ease in, and the Location section melts to black. All content is real, taken from R&amp;F's Phase 3 brochure. Joey's number and photo are placeholders.</p>
+</div>
+<div style="padding:0 1.25rem">
+<div class="browser">
+  <div class="bar"><i></i><i></i><i></i><span class="url">askjoey.my/new-casa-suites</span></div>
+  <div class="site">
+
+    <section class="j">
+      <div class="j-stage">
+        <div class="j-map">
+          <div class="m-d">{{SVG:desk:anim}}</div>
+          <div class="m-p">{{SVG:phone:anim}}</div>
+          <div class="j-rail"><i></i></div>
+          <div class="j-cap c1"><div><div class="n">01 / 05</div><h4>Start at Woodlands North</h4><p>Singapore's RTS Link terminal, on the Thomson–East Coast Line.</p></div></div>
+          <div class="j-cap c2"><div><div class="n">02 / 05</div><h4>Cross on the RTS Link</h4><p>Clear both customs once, at a co-located station. Up to 10,000 passengers an hour each way.</p></div></div>
+          <div class="j-cap c3"><div><div class="n">03 / 05</div><h4>Arrive beside the JB CIQ</h4><p>Bukit Chagar station, by the CIQ and JB Sentral.</p></div></div>
+          <div class="j-cap c4"><div><div class="n">04 / 05</div><div class="j-count"></div><p>The last 650 m under cover: the link bridge from the CIQ to R&amp;F Princess Cove. <span class="note" title="Counter is tied to the scroll (0 → 650), not to a timer.">3</span></p></div></div>
+          <div class="j-cap c5"><div><div class="n">05 / 05</div><h4>Through R&amp;F Mall, home</h4><p>A covered link bridge joins R&amp;F Mall to New Casa Suites.</p></div></div>
+        </div>
+        <div class="j-photo"><i></i></div>
+        <nav class="s-nav">
+          <div class="s-brand"><span class="serif">New Casa Suites</span><small>R&amp;F Princess Cove · Phase 3</small></div>
+          <div class="s-links"><a>Residences</a><a>Location</a><a>Sky Park</a><a>Developer</a><a>FAQ</a></div>
+          <a class="pill light sm"><svg class="wa"><use href="#wa"/></svg>WhatsApp Joey</a>
+          <span class="note" title="Nav text turns from white (on the photo) to charcoal (on the map) and back, scrubbed with the journey.">1</span>
+        </nav>
+        <div class="j-coord mono">1.46° N · 103.77° E<br>Artist's impression</div>
+        <div class="j-title">
+          <div class="eyebrow"><span class="rule" style="background:#F1E6DA"></span>Johor Bahru · Tanjung Puteri</div>
+          <h1>New Casa <em>Suites</em></h1>
+          <p>Freehold homes linked to R&amp;F Mall, a covered walk from the JB CIQ and the RTS Link to Woodlands.</p>
+          <div class="j-cue"><i></i>Scroll · from Woodlands to your front door <span class="note" title="Hero copy rises and blurs away during the first 3–12% of the pinned scroll.">2</span></div>
+        </div>
+        <div class="j-plan">
+          <div class="pl"></div>
+          <div class="eyebrow" style="margin-top:.5rem">Your home · Block C1</div>
+          <h4>Type C · Cozy Haven</h4>
+          <div class="sub" style="margin-bottom:.7rem">2 bed · 2 bath · 781 sq ft (72.56 m²)</div>
+          <a class="pill dark sm"><svg class="wa"><use href="#wa"/></svg>Ask about Type C</a> <span class="note" title="Final act: the photo window re-opens to full bleed and this card wipes in from the right (86–96% of the pinned scroll). Then the pin releases.">4</span>
+        </div>
+        <a class="j-skip">Skip the journey ↓</a>
+        <div class="s-facts">
+          <div class="price"><small>From <span class="note" title="Facts bar stays pinned through the whole journey, so price, beds, baths, size and location are never off screen. The RM1M line is decision 6.">5</span></small><b>RM640,178</b><span class="sgd">≈ S$197,000</span> <span class="fn">· Singapore buyers from RM1M*</span></div>
+          <div><small>Bedrooms</small><b>Studio – 4</b></div>
+          <div><small>Bathrooms</small><b>1 – 3</b></div>
+          <div><small>Size</small><b>313 – 1,555<br>sq ft</b></div>
+          <div><small>Link bridge to CIQ</small><b>650 m, covered</b></div>
+          <div><small>Tenure · Ready</small><b>Freehold<br>Nov 2029</b></div>
+          <div><a class="pill dark"><svg class="wa"><use href="#wa"/></svg>Get the price list</a></div>
+        </div>
+        <div class="j-mfacts"><div class="p"><small>From</small><b>RM640,178</b><span>≈ S$197,000</span></div><div><small>Beds · baths</small><b>Studio–4 · 1–3</b></div><div><small>Size</small><b>313–1,555 sf</b></div></div>
+      </div>
+    </section>
+
+    <section class="s-sec">
+      <div class="s-intro rv">
+        <div><div class="eyebrow"><span class="rule"></span>01 — The address</div></div>
+        <p class="big">New Casa Suites rises on R&amp;F Princess Cove's waterfront. A <em>650-metre covered bridge</em> leads to Johor Bahru's CIQ, and the RTS Link takes you on to Woodlands North with a single customs clearance. R&amp;F Mall is across a covered bridge, and the opera house is next door.</p>
+      </div>
+      <div class="s-stats rv">
+        <div><b>650 m</b><span>covered link bridge to JB CIQ</span></div>
+        <div><b>10,000</b><span>RTS passengers / hour / direction</span></div>
+        <div><b>1,056 m</b><span>Johor–Singapore Causeway</span></div>
+        <div><b>2,259</b><span>homes in Stage A, blocks C1–C3</span></div>
+      </div>
+    </section>
+
+    <div class="s-band px">
+      <div class="layer" style="background-image:var(--i-aerial)"></div>
+      <div class="over"><div class="serif">Johor Bahru ⇄ Woodlands</div><div class="mono" style="color:#fff;opacity:.85">The Straits, the Causeway and R&amp;F Princess Cove · aerial</div></div>
+      <span class="note abs" style="right:16px;top:16px" title="Full-bleed photo band; the image moves at about 85% of scroll speed.">6</span>
+    </div>
+
+    <section class="s-sec">
+      <div class="s-res-head rv">
+        <div><div class="eyebrow"><span class="rule"></span>02 — Residences</div><h2 class="s-h2">Studio to four bedrooms,<br>21 layouts</h2></div>
+        <p style="max-width:26rem;color:var(--mut);margin:0">Every home comes with a digital lockset, a water heater, a built-in kitchen with hood and hob, and tiled floors throughout. The 3- and 4-bed layouts add an oven.</p>
+      </div>
+      <div class="s-tabs"><span>Studio <em>313 sf</em></span><span>1 Bed <em>555–595 sf</em></span><span class="on">2 Bed <em>781–894 sf</em></span><span>3 Bed <em>1,156–1,275 sf</em></span><span>4 Bed <em>1,555 sf</em></span><span class="note" title="Changing tab: the plan cross-fades and slides 12 px (450 ms glide).">7</span></div>
+      <div class="s-unit rv">
+        <div class="plan" style="background-image:var(--i-plan-c)"></div>
+        <div class="info">
+          <div class="eyebrow">Type C / C(M) · Block C1</div>
+          <h3>Cozy Haven<small>2 bed · 2 bath</small></h3>
+          <div class="tagline">Privacy where you sleep, openness where you live.</div>
+          <div class="s-spec"><div><small>Bedrooms</small><b>2</b></div><div><small>Bathrooms</small><b>2</b></div><div><small>Built-up</small><b>781 sq ft</b><div class="sub" style="font-size:.74rem">72.56 m²</div></div></div>
+          <div class="sub" style="font-size:.72rem;letter-spacing:.12em;text-transform:uppercase">Other 2-bed layouts</div>
+          <div class="s-alts"><span class="on">C · 781</span><span>C1 · 820</span><span>C4a · 840</span><span>C4 · 852</span><span>C4c · 852</span><span>C4b · 859</span><span>C5 · 876</span><span>C2 · 877</span><span>C3 · 894</span></div>
+          <div class="s-pricebox"><div><div class="sub">Price for this layout</div><b>Ask Joey for today's price</b> <span class="note" title="R&F advertises prices per block, not per layout. Once Joey's price list is in the content file this shows 'From RM…'.">8</span></div><a class="pill dark sm"><svg class="wa"><use href="#wa"/></svg>Ask about Type C</a></div>
+        </div>
+      </div>
+      <div class="s-summary">
+        <div><b>Studio</b><span>Type A · 313 sq ft · 1 bath</span></div>
+        <div><b>1 Bed</b><span>7 layouts · 555–595 sq ft · 1 bath</span></div>
+        <div><b>2 Bed</b><span>9 layouts · 781–894 sq ft · 2 bath</span></div>
+        <div><b>3 Bed</b><span>3 layouts · 1,156–1,275 sq ft · 2–3 bath</span></div>
+        <div><b>4 Bed</b><span>Type E · 1,555 sq ft · 3 bath</span></div>
+      </div>
+    </section>
+
+    <section class="s-sec tight" style="background:var(--paper)">
+      <div class="s-res-head rv">
+        <div><div class="eyebrow"><span class="rule"></span>03 — Urban Sky Park</div><h2 class="s-h2">An all-in-one active zone,<br>six floors up</h2></div>
+        <p style="max-width:26rem;color:var(--mut);margin:0">22 facilities on Levels 4 and 6, with an elevated jogging track, a covered link to R&amp;F Mall and a childcare centre in the building.</p>
+      </div>
+      <div class="s-mosaic">
+        <div class="img big rv-img" style="background-image:var(--i-pool)"><span class="cap">Swimming pool · Level 6 · artist's impression</span><span class="note abs" style="right:12px;top:12px" title="Images open like a curtain (clip-path 12% → 0) and settle from 108% to 100% as they enter.">9</span></div>
+        <div class="img rv-img" style="background-image:var(--i-family)"><span class="cap">Snooker room · L4</span></div>
+        <div class="img rv-img" style="background-image:var(--i-gym)"><span class="cap">Gym · L6</span></div>
+        <div class="img rv-img hide-sm" style="background-image:var(--i-tennis)"><span class="cap">Tennis court · L6</span></div>
+        <div class="img rv-img" style="background-image:var(--i-childcare)"><span class="cap">Childcare centre · L6</span></div>
+      </div>
+      <div class="s-fac">
+        <div><div class="eyebrow" style="margin-bottom:.6rem">Level 6</div><ol><li><i>01</i>Swimming pool</li><li><i>02</i>Jacuzzi</li><li><i>03</i>Kids' pool</li><li><i>04</i>Covered BBQ area</li><li><i>05</i>Leisure lawn</li><li><i>06</i>Children's playground</li><li><i>07</i>Sauna &amp; changing</li><li><i>08</i>Gym</li><li><i>09</i>Yoga room</li><li><i>10</i>Childcare centre</li><li><i>11</i>Multipurpose room</li><li><i>12</i>Public lobby</li><li><i>13</i>Tennis court</li><li><i>14</i>Basketball court</li><li><i>15</i>Leisure track</li><li><i>16</i>Recreation area</li><li><i>17</i>Outdoor gym</li></ol></div>
+        <div><div class="eyebrow" style="margin-bottom:.6rem">Level 4</div><ol style="columns:1"><li><i>18</i>Table tennis room</li><li><i>19</i>Snooker room</li><li><i>20</i>Changing room</li><li><i>21</i>Link bridge to R&amp;F Mall</li><li><i>22</i>Badminton hall</li></ol>
+          <div class="img rv-img" style="background-image:var(--i-skypark);height:170px;border-radius:14px;margin-top:1rem;position:relative"><span class="cap">Sky Park garden · artist's impression</span></div></div>
+      </div>
+    </section>
+
+    <section class="s-sec s-dark morph">
+      <div class="s-loc">
+        <div class="rv">
+          <div class="eyebrow"><span class="rule"></span>04 — Location <span class="note" title="Background melts from ivory to black as the section scrolls in (no hard edge).">10</span></div>
+          <h2 class="s-h2">The closest you can live<br>to Singapore</h2>
+          <ul class="s-route">
+            <li class="home"><b>New Casa Suites</b><span>Mercu 3, Jalan Tanjung Puteri</span></li>
+            <li>R&amp;F Mall<span>covered link bridge, Level 4</span></li>
+            <li>JB CIQ<span>650 m covered link bridge</span></li>
+            <li>RTS Link · Bukit Chagar<span>one co-located customs clearance</span></li>
+            <li>Woodlands North<span>Thomson–East Coast Line onward to Orchard and Gardens by the Bay</span></li>
+          </ul>
+          <p class="sub" style="color:#A9A196;margin-top:1rem">Also nearby: JB Sentral, Permaisuri Zarith Sofiah Opera House, R&amp;F Marina Place and the yacht club. Distances from R&amp;F's brochure; no travel times claimed.</p>
+        </div>
+        <div class="s-locimg img rv-img" style="background-image:var(--i-rts)"><span class="cap">RTS Link station · artist's impression</span></div>
+      </div>
+    </section>
+
+    <section class="s-sec">
+      <div class="s-two">
+        <div class="rv">
+          <div class="eyebrow"><span class="rule"></span>05 — Fitted as standard</div>
+          <ul class="s-list">
+            <li>Digital lockset<span>all units</span></li>
+            <li>Built-in high &amp; low kitchen cabinets, hood &amp; hob<span>all units</span></li>
+            <li>Water heater + storage water heater<span>all units</span></li>
+            <li>Air-conditioner points<span>1 (studio) – 5 (Type E)</span></li>
+            <li>Tiled floors throughout, glass-railed balconies<span>per layout</span></li>
+            <li>Oven<span>3- &amp; 4-bed (D, E)</span></li>
+          </ul>
+        </div>
+        <div class="rv">
+          <div class="eyebrow"><span class="rule"></span>06 — Developer</div>
+          <div class="s-logo"></div>
+          <p style="margin:1rem 0 0;color:#4A4640">R&amp;F Princess Cove is R&amp;F Group's waterfront township beside the Causeway. Phase 1 and Phase 2 (Seine Region) came first. New Casa Suites is Phase 3, and R&amp;F's own R&amp;R Sojourn can manage your unit for rental.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="s-sec tight" style="background:var(--paper)">
+      <div class="eyebrow"><span class="rule"></span>07 — For Singapore buyers</div>
+      <h2 class="s-h2">Questions Joey hears every week</h2>
+      <div class="s-faq">
+        <details open><summary>Can Singaporeans buy at New Casa Suites?</summary><p>Yes, with the Johor State Authority's consent, which is a condition on this title. Foreign buyers also face a minimum purchase price, widely reported as RM1 million for apartments. Joey will tell you which layouts qualify today and take you through the consent process.</p></details>
+        <details><summary>What do I pay on top of the price?</summary><p>Stamp duty, the state levy for foreign buyers and legal fees. Ask Joey for a worked example for the layout you like.</p></details>
+        <details><summary>When will it be ready?</summary><p>Expected completion is 30 November 2029 for blocks C1, C2 and C3. The land is freehold.</p></details>
+        <details><summary>Can I rent it out?</summary><p>Yes. R&amp;F's R&amp;R Sojourn offers property management. R&amp;F calls Princess Cove Malaysia's most-viewed condominium and rental project.</p></details>
+        <details><summary>Where can I see it?</summary><p>At the R&amp;F sales gallery in Johor Bahru (L2-086-A5, Mercu 1) or at the Singapore sales gallery, 60 Paya Lebar Road #13-30, Paya Lebar Square. Joey books both.</p></details>
+      </div>
+    </section>
+
+    <section class="s-sec">
+      <div class="s-agent rv">
+        <div class="s-mono-ava">JL</div>
+        <div>
+          <div class="eyebrow">Your agent</div>
+          <h3 style="margin:.4rem 0 .5rem">Joey Lee</h3>
+          <div style="color:#4A4640">Real Estate Negotiator · <b>REN 80914</b> · IQI Realty Sdn Bhd<br>Answers every enquiry herself, on WhatsApp or by phone. <span class="note" title="Photo and this line are placeholders until Joey sends a portrait and approves the wording.">11</span></div>
+        </div>
+        <div class="cta">
+          <a class="pill dark"><svg class="wa"><use href="#wa"/></svg>WhatsApp Joey</a>
+          <a class="pill line"><svg class="wa"><use href="#ph"/></svg>+60 1X-XXX XXXX</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="s-foot">
+      <div class="row">
+        <div><b>Joey Lee</b> · REN 80914<br><b>IQI Realty Sdn Bhd</b> · E (1) ____ <span class="note" title="IQI's firm registration number must appear with the REN number on every page; Joey supplies it.">12</span></div>
+        <div style="max-width:34rem">Renders are artist's impressions and, like the lifestyle photos, are supplied by R&amp;F Development; they are subject to change. Prices are the developer's advertised range and may change without notice. Foreign purchase is subject to State Authority consent. The route map is schematic.</div>
+      </div>
+      <details><summary>Developer's particulars (as advertised by R&amp;F)</summary>
+        <div class="legal">Developer: R&amp;F Development Sdn Bhd (1069248-H) · L2-086-A5, Mercu 1, Jalan Tanjung Puteri 1, R&amp;F Tanjung Puteri, 80300 Johor Bahru · Developer's Licence 13578/05-2027/0392(A), valid 26/04/2022–05/05/2027 · Approving authority: Majlis Bandaraya Johor Bahru · Land tenure: freehold · Encumbrance: nil · Expected completion: 30/11/2029 · Bumiputera discount 15%.<br>
+        <b style="color:#CFC6B9">Block C1</b> · A&amp;S permit 13578-8/07-2028/0621(N)-(S), valid 31/07/2025–30/07/2028 · BP ref. MBJB/U/2024/14/BGN/178/KOM(16) · 422 units · RM846,905 – RM1,275,259 · 593 – 781 sq ft.<br>
+        <b style="color:#CFC6B9">Block C2</b> · A&amp;S permit 13578-7/07-2028/0622(N)-(S) · BP ref. MBJB/U/2024/14/BGN/179/KOM(16) · 1,137 units · RM640,178 – RM2,116,680 · 313 – 1,275 sq ft.<br>
+        <b style="color:#CFC6B9">Block C3</b> · A&amp;S permit 13578-6/07-2028/0623(N)-(S) · BP ref. MBJB/U/2024/14/BGN/180/KOM(16) · 700 units · RM761,168 – RM3,567,158 · 555 – 1,555 sq ft.<br>
+        Restrictions in interest: no sale to a non-citizen or foreign company without State Authority consent; Bumiputera lots may not be transferred to non-Bumiputera without consent.</div>
+      </details>
+    </footer>
+    <div class="s-fab"><svg class="wa" style="color:#25D366"><use href="#wa"/></svg>WhatsApp Joey</div>
+  </div>
+</div>
+</div>
+<div class="notes"><h3>Notes</h3><ol>
+  <li>The nav rides on top of the journey and changes colour with it (white on the photo, charcoal on the map). After the hero it pins in ivory and hides while scrolling down.</li>
+  <li>The hero copy leaves first, rising and blurring, so the title never fights the map.</li>
+  <li>The counter is scrubbed by the scroll, not a timer: scroll back and it counts down.</li>
+  <li>The film ends on a product, not a slogan: the floor-plan card with a WhatsApp button for that layout.</li>
+  <li>The facts bar is pinned for the whole hero, so price, bedrooms, bathrooms, size and location are never off screen. That keeps "key facts early" while the story plays.</li>
+  <li>Full-bleed photo bands carry the parallax; text sections stay still and readable.</li>
+  <li>Bedroom tabs show the size range on the tab itself; changing tab cross-fades the plan.</li>
+  <li>R&amp;F publishes price ranges per block, not per layout. This box asks for now and shows "From RM…" once Joey's price list is in.</li>
+  <li>Images open like a curtain as they enter, in the silk easing.</li>
+  <li>Location melts from ivory to black instead of a hard edge, the "silk" change between sections.</li>
+  <li>The portrait and the line under the name are placeholders.</li>
+  <li>The REN number, agency name and agency registration number appear on every page and in the share preview.</li>
+</ol></div>
+</section>
+
+<!-- ══════════════════════ s3 · HOME PHONE ══════════════════════ -->
+<section id="s3" class="state">
+<div class="wrap">
+  <h1 class="ph1">Home, phone: the same film in portrait</h1>
+  <p class="lead">Scroll inside the first phone: Singapore is at the bottom, Johor Bahru at the top, and the route climbs up the screen. The compact facts strip and the WhatsApp / Call bar stay in view throughout.</p>
+</div>
+<div class="phones" style="padding:0 1rem">
+  <div>
+    <div class="phone"><div class="screen"><div class="notch"></div><div class="scroll"><div class="site">
+      <section class="j">
+        <div class="j-stage">
+          <div class="j-map">
+            <div class="m-p">{{SVG:phone:anim}}</div>
+            <div class="j-cap c1"><div><div class="n">01 / 05</div><h4>Start at Woodlands North</h4><p>Singapore's RTS terminal, on the TEL.</p></div></div>
+            <div class="j-cap c2"><div><div class="n">02 / 05</div><h4>Cross on the RTS Link</h4><p>One co-located customs clearance.</p></div></div>
+            <div class="j-cap c3"><div><div class="n">03 / 05</div><h4>Arrive by the JB CIQ</h4><p>Bukit Chagar station.</p></div></div>
+            <div class="j-cap c4"><div><div class="n">04 / 05</div><div class="j-count"></div><p>The last 650 m, under cover.</p></div></div>
+            <div class="j-cap c5"><div><div class="n">05 / 05</div><h4>Through R&amp;F Mall, home</h4><p>A covered link to New Casa Suites.</p></div></div>
+          </div>
+          <div class="j-photo"><i></i></div>
+          <nav class="s-nav"><div class="s-brand"><span class="serif" style="font-size:1.25rem">New Casa Suites</span><small>R&amp;F Princess Cove</small></div><a class="pill light sm" style="padding:.45rem .8rem">Menu</a></nav>
+          <div class="j-title"><div class="eyebrow">Johor Bahru · Phase 3</div><h1>New Casa <em>Suites</em></h1><p>Freehold homes a covered walk from the JB CIQ.</p><div class="j-cue"><i></i>Scroll · Woodlands to your door</div></div>
+          <div class="j-plan"><div class="pl"></div><div class="eyebrow" style="margin-top:.4rem">Your home · Block C1</div><h4>Type C · Cozy Haven</h4><div class="sub">2 bed · 2 bath · 781 sq ft</div></div>
+          <div class="j-mfacts"><div class="p"><small>From</small><b>RM640,178</b><span>≈ S$197,000</span></div><div><small>Beds · baths</small><b>Studio–4 · 1–3</b></div><div><small>Size</small><b>313–1,555 sf</b></div></div>
+        </div>
+      </section>
+      <section class="s-sec">
+        <div class="eyebrow"><span class="rule"></span>01 — The address</div>
+        <p class="serif" style="font-size:1.45rem;line-height:1.3;margin:.8rem 0 0;color:#141312">A <em style="color:#8A5F40">650-metre covered bridge</em> to the CIQ, and the RTS Link on to Woodlands North with one customs clearance.</p>
+        <div class="s-stats"><div><b>650 m</b><span>link bridge to CIQ</span></div><div><b>10,000</b><span>RTS pax / hour / dir.</span></div><div><b>Freehold</b><span>tenure</span></div><div><b>2029</b><span>completion</span></div></div>
+      </section>
+      <div class="s-band px"><div class="layer" style="background-image:var(--i-aerial)"></div><div class="over"><div class="serif" style="font-size:1.9rem">Johor Bahru ⇄ Woodlands</div></div></div>
+      <section class="s-sec" style="padding-bottom:2rem"><div class="eyebrow"><span class="rule"></span>02 — Residences</div><h2 class="s-h2">Studio to four bedrooms</h2></section>
+      <div class="s-bar"><a class="pill dark"><svg class="wa" style="color:#25D366"><use href="#wa"/></svg>WhatsApp Joey</a><a class="pill line"><svg class="wa"><use href="#ph"/></svg>Call</a></div>
+    </div></div></div></div>
+    <div class="phone-cap">① The route hero: scroll inside this phone <span class="note" title="Pinned for ~4 screens (2,960 px here). The map is portrait; the photo window sits top-right; captions top-left; facts strip and contact bar never move.">1</span></div>
+  </div>
+
+  <div>
+    <div class="phone"><div class="screen"><div class="notch"></div><div class="scroll"><div class="site">
+      <div style="height:54px;background:var(--ivory)"></div>
+      <section class="s-sec" style="padding-top:.6rem">
+        <div class="eyebrow"><span class="rule"></span>02 — Residences</div>
+        <h2 class="s-h2">Studio to four bedrooms</h2>
+        <div class="s-tabs"><span>Studio</span><span>1 Bed</span><span>2 Bed</span><span class="on">3 Bed <em>1,156–1,275 sf</em></span><span>4 Bed</span></div>
+        <div class="s-unit">
+          <div class="plan" style="background-image:var(--i-plan-d1)"></div>
+          <div class="info">
+            <div class="eyebrow">Type D1 / D1(M) · Block C3</div>
+            <h3>Deluxe Family</h3>
+            <div class="tagline">Open plan for hosting, three bedrooms for family.</div>
+            <div class="s-spec"><div><small>Beds</small><b>3</b></div><div><small>Baths</small><b>2</b></div><div><small>Size</small><b>1,156 sf</b></div></div>
+            <div class="s-alts"><span class="on">D1 · 1,156</span><span>D3 · 1,161 +study</span><span>D2 · 1,275 · 3 bath</span></div>
+            <div class="s-pricebox"><div><div class="sub">Price for this layout</div><b style="font-size:1.15rem">Ask Joey for today's price</b></div></div>
+          </div>
+        </div>
+      </section>
+      <section class="s-sec" style="background:var(--paper);padding-top:2.6rem">
+        <div class="eyebrow"><span class="rule"></span>03 — Urban Sky Park</div>
+        <h2 class="s-h2">22 facilities, six floors up</h2>
+        <div class="s-mosaic"><div class="img big" style="background-image:var(--i-pool)"><span class="cap">Pool · L6</span></div><div class="img" style="background-image:var(--i-gym)"><span class="cap">Gym</span></div><div class="img" style="background-image:var(--i-yoga)"><span class="cap">Yoga</span></div><div class="img" style="background-image:var(--i-childcare)"><span class="cap">Childcare</span></div><div class="img" style="background-image:var(--i-badminton)"><span class="cap">Badminton</span></div></div>
+      </section>
+      <div class="s-bar"><a class="pill dark"><svg class="wa" style="color:#25D366"><use href="#wa"/></svg>Ask about D1</a><a class="pill line"><svg class="wa"><use href="#ph"/></svg>Call</a></div>
+    </div></div></div></div>
+    <div class="phone-cap">② Residences: the bar follows the layout in view <span class="note" title="While a layout card is on screen, the bar's WhatsApp label and message switch to that type.">2</span></div>
+  </div>
+
+  <div>
+    <div class="phone"><div class="screen"><div class="notch"></div>
+      <div class="site" style="height:100%">
+        <div class="s-menu">
+          <div class="eyebrow" style="color:#BC8C68;margin-bottom:1rem">New Casa Suites</div>
+          <a class="m">Residences</a><a class="m">Location</a><a class="m">Sky Park</a><a class="m">Developer</a><a class="m">FAQ</a>
+          <div style="margin-top:auto;font-size:.82rem;color:#A9A196">Joey Lee · REN 80914<br>IQI Realty Sdn Bhd</div>
+          <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:.5rem;margin-top:1rem"><a class="pill light" style="justify-content:center"><svg class="wa" style="color:#1d9e4a"><use href="#wa"/></svg>WhatsApp</a><a class="pill" style="justify-content:center;border:1px solid rgb(255 255 255/.3);color:#fff">Call</a></div>
+        </div>
+      </div>
+    </div></div>
+    <div class="phone-cap">③ Menu: five anchors plus contact <span class="note" title="Full-screen menu fades in (450 ms silk); links rise in with a 40 ms stagger.">3</span></div>
+  </div>
+</div>
+<div class="notes"><h3>Notes</h3><ol>
+  <li>On a phone the journey is about four screens of scrolling. The first screen still shows the photo, the name and price · beds · size, and the CIQ distance arrives with the route itself.</li>
+  <li>The bottom bar is context-aware: on a layout it reads "Ask about D1" and pre-fills that type.</li>
+  <li>The menu has five anchors and the contact buttons, and no sub-pages.</li>
+  <li>Phones keep native momentum scrolling (no smooth-scroll library on touch), and the parallax is gentler, about half the desktop travel.</li>
+</ol></div>
+</section>
+
+<!-- ══════════════════════ s4 · CONTACT ══════════════════════ -->
+<section id="s4" class="state">
+<div class="wrap">
+  <h1 class="ph1">Contact: every tap lands in Joey's WhatsApp, already written</h1>
+  <p class="lead">No form and no inbox. Each button opens WhatsApp (<code>wa.me/60…?text=…</code>) with a message that says where the buyer came from. "Call" opens the dialler (<code>tel:+60…</code>).</p>
+  <div class="cols2" style="margin-top:1.2rem;align-items:start">
+    <div class="tw"><table class="t">
+      <tr><th>Button</th><th>Where it is</th><th>Message Joey receives</th></tr>
+      <tr><td><b>Get the price list</b></td><td>Facts bar</td><td>"Hi Joey, please send me the latest New Casa Suites price list. (via website)"</td></tr>
+      <tr><td><b>Ask about Type C</b></td><td>End of the hero journey, layout card, phone bar</td><td>"Hi Joey, I'd like the price and availability of Type C (2 bed, 781 sq ft) at New Casa Suites. (via website)"</td></tr>
+      <tr><td><b>Which units can I buy?</b></td><td>FAQ, Singapore buyers</td><td>"Hi Joey, I'm buying from Singapore. Which New Casa Suites units can I buy? (via website)"</td></tr>
+      <tr><td><b>Book a viewing</b></td><td>FAQ, "Where can I see it?"</td><td>"Hi Joey, I'd like to book a viewing at the JB / Singapore sales gallery. (via website)"</td></tr>
+      <tr><td><b>WhatsApp Joey</b></td><td>Nav, floating button, phone bar, agent block</td><td>"Hi Joey, I'm interested in New Casa Suites at R&amp;F Princess Cove. (via website)"</td></tr>
+      <tr><td><b>Call</b></td><td>Phone bar, agent block</td><td>Opens the dialler with Joey's number</td></tr>
+    </table></div>
+    <div>
+      <div class="wa-chat">
+        <div class="hd"><i></i><div><b>Joey Lee</b><div style="font-size:.7rem;opacity:.7">what Joey sees</div></div></div>
+        <div class="msg me">Hi Joey, I'd like the price and availability of Type C (2 bed, 781 sq ft) at New Casa Suites. (via website)<span class="t">21:14</span></div>
+        <div class="msg">Hi! Thanks for asking. Here's today's price list for Type C in Block C1 📄 Are you buying from Singapore?<span class="t">21:16</span></div>
+        <div class="msg me">Yes, Punggol. Can I view on Saturday?<span class="t">21:17</span></div>
+      </div>
+      <p class="sub" style="margin-top:.8rem">"(via website)" lets Joey tell site leads from other contacts. Taps are counted by a cookie-less page counter, with no personal data collected.</p>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ══════════════════════ s5 · CONTENT ══════════════════════ -->
+<section id="s5" class="state">
+<div class="wrap">
+  <h1 class="ph1">Content extracted from R&amp;F's material</h1>
+  <p class="lead">Downloaded from rfmalaysia.com: the <b>Phase 3 Brochure</b> (10 spreads; the text is flattened into images, so it was read from rendered pages) and the <b>Phase 3 Brochure (Simplified)</b> floor-plan folder (EN/CN), plus the Phase 3 page's 21 floor plans and its renders. Everything is saved under <code>materials/rf-princess-cove-phase-3/</code>, with all the facts in <code>FACTS.md</code>.</p>
+
+  <h2 class="ph2">Blocks now selling: the developer's advertised particulars</h2>
+  <div class="tw"><table class="t">
+    <tr><th>Block</th><th class="num">Units</th><th class="num">Price min</th><th class="num">Price max</th><th>Built-up</th><th>A&amp;S permit</th><th>Building plan</th></tr>
+    <tr><td>C1</td><td class="num">422</td><td class="num">RM846,905</td><td class="num">RM1,275,259</td><td>593 – 781 sq ft</td><td>13578-8/07-2028/0621(N)-(S)</td><td>MBJB/U/2024/14/BGN/178/KOM(16)</td></tr>
+    <tr><td>C2</td><td class="num">1,137</td><td class="num">RM640,178</td><td class="num">RM2,116,680</td><td>313 – 1,275 sq ft</td><td>13578-7/07-2028/0622(N)-(S)</td><td>MBJB/U/2024/14/BGN/179/KOM(16)</td></tr>
+    <tr><td>C3</td><td class="num">700</td><td class="num">RM761,168</td><td class="num">RM3,567,158</td><td>555 – 1,555 sq ft</td><td>13578-6/07-2028/0623(N)-(S)</td><td>MBJB/U/2024/14/BGN/180/KOM(16)</td></tr>
+  </table></div>
+  <p class="sub">All blocks: freehold, no encumbrance, expected completion 30/11/2029, permits valid 31/07/2025–30/07/2028, Bumiputera discount 15%, sale to non-citizens only with State Authority consent. Phase 3 in total is 4,385 units (R&amp;F's Phase 3 page); Stage B (C5, C3A) is future.</p>
+
+  <h2 class="ph2">The 21 layouts</h2>
+  <div class="tw"><table class="t">
+    <tr><th>Type</th><th>Bed</th><th>Bath</th><th class="num">sq ft</th><th class="num">m²</th><th>R&amp;F's name</th></tr>
+    <tr><td>A / A(M)</td><td>Studio</td><td>1</td><td class="num">313</td><td class="num">29.16</td><td>Compact Elegance</td></tr>
+    <tr><td>B1b / B1b(M)</td><td>1</td><td>1</td><td class="num">555</td><td class="num">51.64</td><td>Balcony Bliss</td></tr>
+    <tr><td>B2 / B2(M)</td><td>1</td><td>1</td><td class="num">558</td><td class="num">51.89</td><td>Urban Retreat</td></tr>
+    <tr><td>B1 / B1(M)</td><td>1</td><td>1</td><td class="num">577</td><td class="num">53.67</td><td>Sleek and Modern</td></tr>
+    <tr><td>B3 / B3(M) · B3b · B3c</td><td>1</td><td>1</td><td class="num">593</td><td class="num">55.14</td><td>Scenic and Spacious · Masterful Design · Elegance Unfolded</td></tr>
+    <tr><td>B3a / B3a(M)</td><td>1</td><td>1</td><td class="num">595</td><td class="num">55.35</td><td>Streamlined Elegance</td></tr>
+    <tr><td>C / C(M)</td><td>2</td><td>2</td><td class="num">781</td><td class="num">72.56</td><td>Cozy Haven</td></tr>
+    <tr><td>C1 / C1(M)</td><td>2</td><td>2</td><td class="num">820</td><td class="num">76.19</td><td>Modern Comfort</td></tr>
+    <tr><td>C4a</td><td>2</td><td>2</td><td class="num">840</td><td class="num">78.06</td><td>Serene Outlook</td></tr>
+    <tr><td>C4 · C4c</td><td>2</td><td>2</td><td class="num">852</td><td class="num">79.18</td><td>Refined Spaces · Sleek Sanctuary</td></tr>
+    <tr><td>C4b</td><td>2</td><td>2</td><td class="num">859</td><td class="num">79.88</td><td>Symmetrical Sophistication</td></tr>
+    <tr><td>C5</td><td>2</td><td>2</td><td class="num">876</td><td class="num">81.41</td><td>Peak Sophistication</td></tr>
+    <tr><td>C2 / C2(M)</td><td>2</td><td>2</td><td class="num">877</td><td class="num">81.54</td><td>Functional Harmony</td></tr>
+    <tr><td>C3 / C3(M)</td><td>2</td><td>2</td><td class="num">894</td><td class="num">83.09</td><td>Spacious Living</td></tr>
+    <tr><td>D1 / D1(M)</td><td>3</td><td>2</td><td class="num">1,156</td><td class="num">107.45</td><td>Deluxe Family</td></tr>
+    <tr><td>D3 / D3(M)</td><td>3 + study</td><td>2</td><td class="num">1,161</td><td class="num">107.94</td><td>Contemporary Luxury</td></tr>
+    <tr><td>D2 / D2(M)</td><td>3</td><td>3</td><td class="num">1,275</td><td class="num">118.47</td><td>Expansive Elegance</td></tr>
+    <tr><td>E / E(M)</td><td>4</td><td>3</td><td class="num">1,555</td><td class="num">144.55</td><td>Grand Family Estate</td></tr>
+  </table></div>
+
+  <h2 class="ph2">Selling points, in R&amp;F's words (brochure "Top 10 reasons")</h2>
+  <ol style="columns:2;column-gap:2rem;font-size:.92rem;padding-left:1.2rem">
+    <li>Border crossing with 350,000 travellers daily</li><li>Connected to the RTS station, with direct access to Singapore</li><li>650 m sheltered link bridge to the CIQ</li><li>Integrated commercial development linked with R&amp;F Mall</li><li>The only 450 m sky lounge jogging track in Johor Bahru</li><li>Malaysia's most-viewed condominium &amp; rental project</li><li>First opera house in Johor Bahru</li><li>Private yacht club, International Marina Boulevard</li><li>R&amp;F Marina Place, the international boulevard closest to Singapore</li><li>R&amp;R Sojourn property management</li>
+  </ol>
+
+  <h2 class="ph2">Image library (graded, as used on the site)</h2>
+  <div class="imglib">
+    <div style="background-image:var(--i-hero)"><span>tower · dusk</span></div>
+    <div style="background-image:var(--i-hero-p)"><span>tower · portrait</span></div>
+    <div style="background-image:var(--i-day)"><span>tower · day</span></div>
+    <div style="background-image:var(--i-aerial)"><span>Causeway aerial</span></div>
+    <div style="background-image:var(--i-night)"><span>aerial · night</span></div>
+    <div style="background-image:var(--i-pool)"><span>pool</span></div>
+    <div style="background-image:var(--i-skypark)"><span>Sky Park</span></div>
+    <div style="background-image:var(--i-walkway)"><span>covered walkway</span></div>
+    <div style="background-image:var(--i-rts)"><span>RTS station</span></div>
+    <div style="background-image:var(--i-family)"><span>family · snooker</span></div>
+    <div style="background-image:var(--i-tennis)"><span>tennis</span></div>
+    <div style="background-image:var(--i-gym)"><span>gym</span></div>
+    <div style="background-image:var(--i-yoga)"><span>yoga room</span></div>
+    <div style="background-image:var(--i-childcare)"><span>childcare</span></div>
+    <div style="background-image:var(--i-badminton)"><span>badminton hall</span></div>
+    <div class="ct" style="background-image:var(--i-plan-a)"><span>plan A · studio</span></div>
+    <div class="ct" style="background-image:var(--i-plan-b1)"><span>plan B1 · 1 bed</span></div>
+    <div class="ct" style="background-image:var(--i-plan-c)"><span>plan C · 2 bed</span></div>
+    <div class="ct" style="background-image:var(--i-plan-d1)"><span>plan D1 · 3 bed</span></div>
+    <div class="ct" style="background-image:var(--i-plan-e)"><span>plan E · 4 bed</span></div>
+  </div>
+  <p class="sub" style="margin-top:.6rem">Left out: the brochure's composite spreads (athletes, a ballerina and towers in one image), images with Chinese labels burnt in, and the bilingual maps. The route map in the hero is redrawn in the site's palette instead.</p>
+</div>
+</section>
+
+<!-- ══════════════════════ s6 · BUILD NOTES ══════════════════════ -->
+<section id="s6" class="state">
+<div class="wrap">
+  <h1 class="ph1">Build notes</h1>
+  <p class="lead">This is a new project with no existing code to reuse. The repository holds this proposal and the downloaded material.</p>
+  <div class="cols2" style="margin-top:1rem">
+    <div class="card">
+      <h3 style="font-size:1rem;margin-bottom:.4rem">How it would be built</h3>
+      <ul style="margin:0;padding-left:1.1rem;font-size:.92rem">
+        <li><b>A static site</b> (Astro, one page plus 21 layout links) generated from one content file: facts, layouts, prices, the S$ rate, Joey's contact details.</li>
+        <li><b>Hero journey</b>: one SVG route map (desktop and portrait versions) and the graded photo; GSAP ScrollTrigger pins the stage and scrubs one timeline; Lenis smooths wheel scrolling on desktop only. Each act is a label on that timeline, so the timing can be tuned without touching the markup.</li>
+        <li><b>Other motion</b>: reveals, curtains and parallax on the same ScrollTrigger setup; View Transitions to open a floor plan; one pair of easings (silk, glide). All of it is off under reduced motion.</li>
+        <li><b>Type</b>: Newsreader + Hanken Grotesk, self-hosted, subset to Latin, preloaded (≈ 90 KB).</li>
+        <li><b>Images</b>: originals in <code>materials/</code>; cropped, graded and output as AVIF/WebP in three widths at build time. The hero stays under 200 KB on phones.</li>
+        <li><b>Sharing</b>: the WhatsApp/Facebook preview card uses the graded hero with "From RM640,178 · REN 80914".</li>
+        <li><b>Hosting</b>: a static CDN with Singapore edge locations, deployed from git. Joey owns the domain.</li>
+        <li><b>Quality bar</b>: Lighthouse mobile ≥ 90; 60 fps through the hero on an iPhone 12-class phone; everything readable at 360 px; AA contrast.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="font-size:1rem;margin-bottom:.4rem">Phases</h3>
+      <ol style="margin:0;padding-left:1.2rem;font-size:.92rem">
+        <li>Joey answers the open decisions and sends her number, portrait, IQI registration number and current price list.</li>
+        <li>Build the single page, desktop and phone, with all 21 layouts, the contact links and the route hero; preview on the tailnet for El and Joey.</li>
+        <li>Publish on Joey's domain, set up the share card, a cookie-less counter for WhatsApp taps, and a monthly price-list refresh.</li>
+        <li>Optional: a second project page (e.g. Exsim Causewayz Square) under a neutral "Joey Lee" frame.</li>
+      </ol>
+      <h3 style="font-size:1rem;margin:1rem 0 .4rem">Still unverified</h3>
+      <ul style="margin:0;padding-left:1.1rem;font-size:.92rem">
+        <li>The walking connection between Bukit Chagar RTS station and the JB CIQ / link bridge. The hero follows R&amp;F's own journey diagram and draws that leg dotted.</li>
+        <li>Johor's minimum price for foreign buyers on this project (RM1M is the figure reported in the press) and the foreign-buyer levy.</li>
+        <li>IQI Realty's firm registration number, E (1) ____.</li>
+        <li>Joey's authority to use R&amp;F's logo, renders and floor plans.</li>
+        <li>Per-layout prices and what is still available.</li>
+        <li>The S$/RM rate shown (this page uses an example of 3.25).</li>
+        <li>Whether "Exsim Causeway Square" in the brief means a second listing (decision 1).</li>
+      </ul>
+    </div>
+  </div>
+  <h2 class="ph2">Material saved in the project</h2>
+  <div class="tw"><table class="t">
+    <tr><th>Path</th><th>What</th></tr>
+    <tr><td><code>materials/rf-princess-cove-phase-3/FACTS.md</code></td><td>Every fact above, with sources</td></tr>
+    <tr><td><code>…/brochures/</code></td><td>Phase 3 Brochure (7.5 MB), Phase 3 Simplified floor-plan folder EN/CN (6.8 MB)</td></tr>
+    <tr><td><code>…/brochure-pages/</code></td><td>Every page rendered to JPEG (the readable copies)</td></tr>
+    <tr><td><code>…/images/floor-plans/</code></td><td>All 21 layouts, <code>01-type-A.jpg</code> … <code>21-type-E.jpg</code></td></tr>
+    <tr><td><code>…/images/renders/ · lifestyle/ · facilities/ · brand/</code></td><td>Renders up to 3,672 px, lifestyle photos, facility interiors, the R&amp;F bronze logo</td></tr>
+  </table></div>
+</div>
+</section>
+
+<script>
+  function show(id){
+    document.querySelectorAll('.state').forEach(s=>s.classList.toggle('on',s.id===id));
+    document.querySelectorAll('.proposal-bar button').forEach(b=>b.classList.toggle('on',b.dataset.state===id));
+    window.scrollTo({top:0});
+  }
+</script>
+</body>
+</html>
