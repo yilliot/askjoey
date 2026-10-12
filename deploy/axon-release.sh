@@ -19,7 +19,11 @@ git -C "$REPO" fetch -q origin main
 git -C "$REPO" reset -q --hard origin/main   # the server copy never carries its own edits
 sha=$(git -C "$REPO" rev-parse --short HEAD)
 cd "$REPO/site"
-npm ci --no-audit --no-fund --loglevel=error
+# reinstall only when the lockfile changed
+lock=$(sha256sum package-lock.json | cut -c1-16)
+if [ ! -d node_modules ] || [ "$(cat node_modules/.lock-sha 2>/dev/null)" != "$lock" ]; then
+  npm ci --no-audit --no-fund --loglevel=error && echo "$lock" > node_modules/.lock-sha
+fi
 npm run build --silent > "$ROOT/build.log" 2>&1 || { tail -30 "$ROOT/build.log"; exit 1; }
 test -f dist/index.html && test -f dist/new-casa-suites/index.html
 
