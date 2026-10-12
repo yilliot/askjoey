@@ -1,0 +1,161 @@
+---
+// The New Casa Suites page. The hero is a slot so /lab/ can try other openings in front of the same page.
+import { Picture } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import RouteHero from '../RouteHero.astro';
+import Residences from '../Residences.astro';
+import Agent from '../Agent.astro';
+import Icon from '../Icon.astro';
+import Legal from '../Legal.astro';
+import { project as p, groups } from '../../data/new-casa-suites';
+import { wa, fxNote } from '../../lib/format';
+
+const waText = 'Hi Joey, I\'m interested in New Casa Suites at R&F Princess Cove.';
+const links = [
+  { href: '#residences', label: 'Residences' },
+  { href: '#location', label: 'Location' },
+  { href: '#sky-park', label: 'Sky Park' },
+  { href: '#developer', label: 'Developer' },
+  { href: '#faq', label: 'FAQ' },
+  { href: '/', label: 'All projects' },
+];
+---
+<Base
+  page="new-casa-suites"
+  title="New Casa Suites · R&F Princess Cove Phase 3, Johor Bahru — Ask Joey"
+  description="Freehold homes at R&F Princess Cove, linked to R&F Mall and a 650 m covered bridge from the JB CIQ and the RTS Link to Woodlands. Studio to 4 bedrooms, from RM640,178. Joey Lee, REN 80914, IQI Realty."
+  og={p.img.hero}
+  brand={{ name: p.name, sub: p.place, href: '/new-casa-suites/' }}
+  links={links}
+  over
+  waText={waText}
+>
+  <slot name="hero"><RouteHero /></slot>
+
+  <section class="sec" id="address">
+    <div class="intro">
+      <div class="rv"><div class="eyebrow"><span class="rule"></span>01 — The address</div></div>
+      <p class="lead rv">New Casa Suites rises on R&amp;F Princess Cove's waterfront. A <em>650-metre covered bridge</em> leads to Johor Bahru's CIQ, and the RTS Link takes you on to Woodlands North with a single customs clearance. R&amp;F Mall is across a covered bridge, and the opera house is next door.</p>
+    </div>
+    <div class="stats rv">
+      <div><b data-count="650">650 m</b><span>covered link bridge to JB CIQ</span></div>
+      <div><b data-count="10000">10,000</b><span>RTS passengers / hour / direction</span></div>
+      <div><b data-count="1056">1,056 m</b><span>Johor–Singapore Causeway</span></div>
+      <div><b data-count="2259">2,259</b><span>homes in Stage A, blocks C1–C3</span></div>
+    </div>
+  </section>
+
+  <div class="band px">
+    <div class="layer"><Picture src={p.img.aerial} alt="The Straits of Johor, the Causeway and R&F Princess Cove from the air, artist's impression" widths={[960, 1600, 2400, 3000]} sizes="100vw" formats={['avif', 'webp']} /></div>
+    <div class="over"><div class="serif">Johor Bahru — Woodlands</div><div class="mono" style="opacity:.85">The Straits, the Causeway and R&amp;F Princess Cove · aerial</div></div>
+  </div>
+
+  <section class="sec" id="residences">
+    <div class="head rv">
+      <div><div class="eyebrow"><span class="rule"></span>02 — Residences</div><h2 class="h2">Studio to four bedrooms,<br />21 layouts</h2></div>
+      <p>Every home comes with a digital lockset, a water heater, a built-in kitchen with hood and hob, and tiled floors throughout. The 3- and 4-bed layouts add an oven.</p>
+    </div>
+    <Residences groups={groups} project={p.name} open={{ group: 'two', key: 'C' }} />
+  </section>
+
+  <section class="sec tight paper" id="sky-park">
+    <div class="head rv">
+      <div><div class="eyebrow"><span class="rule"></span>03 — Urban Sky Park</div><h2 class="h2">An all-in-one active zone,<br />six floors up</h2></div>
+      <p>22 facilities on Levels 4 and 6, with an elevated jogging track, a covered link to R&amp;F Mall and a childcare centre in the building.</p>
+    </div>
+    <div class="mosaic">
+      <div class="ph big rv-img"><Picture src={p.img.pool} alt="Swimming pool on Level 6, artist's impression" widths={[700, 1100, 1600]} sizes="(max-width:760px) 100vw, 50vw" formats={['avif', 'webp']} /><span class="cap">Swimming pool · Level 6 · artist's impression</span></div>
+      <div class="ph rv-img"><Picture src={p.img.family} alt="Family in the snooker room" widths={[400, 700, 1000]} sizes="(max-width:760px) 50vw, 25vw" formats={['avif', 'webp']} /><span class="cap">Snooker room · L4</span></div>
+      <div class="ph rv-img"><Picture src={p.img.gym} alt="Gym, artist's impression" widths={[400, 700, 1000]} sizes="(max-width:760px) 50vw, 25vw" formats={['avif', 'webp']} /><span class="cap">Gym · L6</span></div>
+      <div class="ph rv-img hide-sm"><Picture src={p.img.tennis} alt="Tennis court" widths={[400, 700, 1000]} sizes="25vw" formats={['avif', 'webp']} /><span class="cap">Tennis court · L6</span></div>
+      <div class="ph rv-img"><Picture src={p.img.childcare} alt="Childcare centre, artist's impression" widths={[400, 700, 1000]} sizes="(max-width:760px) 50vw, 25vw" formats={['avif', 'webp']} /><span class="cap">Childcare centre · L6</span></div>
+    </div>
+    <div class="fac">
+      <div class="rv">
+        <div class="eyebrow" style="margin-bottom:.6rem">Level 6</div>
+        <ol>{p.facilities.l6.map((f, i) => <li><i>{String(i + 1).padStart(2, '0')}</i>{f}</li>)}</ol>
+      </div>
+      <div class="rv">
+        <div class="eyebrow" style="margin-bottom:.6rem">Level 4</div>
+        <ol style="columns:1">{p.facilities.l4.map((f, i) => <li><i>{String(i + 18).padStart(2, '0')}</i>{f}</li>)}</ol>
+        <div class="ph rv-img"><Picture src={p.img.skypark} alt="Sky Park garden, artist's impression" widths={[500, 755]} sizes="(max-width:760px) 100vw, 40vw" formats={['avif', 'webp']} /><span class="cap">Sky Park garden · artist's impression</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec dark morph" id="location">
+    <div class="loc">
+      <div class="rv">
+        <div class="eyebrow"><span class="rule"></span>04 — Location</div>
+        <h2 class="h2">The closest you can live<br />to Singapore</h2>
+        <ul class="route">
+          <li class="home"><b>New Casa Suites</b><span>Mercu 3, Jalan Tanjung Puteri</span></li>
+          <li>R&amp;F Mall<span>covered link bridge, Level 4</span></li>
+          <li>JB CIQ<span>650 m covered link bridge</span></li>
+          <li>RTS Link · Bukit Chagar<span>one co-located customs clearance</span></li>
+          <li>Woodlands North<span>Thomson–East Coast Line onward to Orchard and Gardens by the Bay</span></li>
+        </ul>
+        <p class="note">Also nearby: JB Sentral, Permaisuri Zarith Sofiah Opera House, R&amp;F Marina Place and the yacht club. Distances from R&amp;F's brochure; the map above is schematic and no travel times are claimed.</p>
+      </div>
+      <div class="ph rv-img"><Picture src={p.img.rts} alt="RTS Link station, artist's impression" widths={[600, 1029]} sizes="(max-width:760px) 100vw, 45vw" formats={['avif', 'webp']} /><span class="cap">RTS Link station · artist's impression</span></div>
+    </div>
+  </section>
+
+  <div class="band px">
+    <div class="layer"><Picture src={p.img.night} alt="R&F Princess Cove at night from the air, artist's impression" widths={[960, 1600, 2560]} sizes="100vw" formats={['avif', 'webp']} /></div>
+    <div class="over"><div class="serif">On the water, by the border</div><div class="mono" style="opacity:.85">R&amp;F Princess Cove at night · artist's impression</div></div>
+  </div>
+
+  <section class="sec" id="developer">
+    <div class="two">
+      <div class="rv">
+        <div class="eyebrow"><span class="rule"></span>05 — Fitted as standard</div>
+        <ul class="list">{p.specs.map(([a, b]) => <li>{a}<span>{b}</span></li>)}</ul>
+      </div>
+      <div class="rv">
+        <div class="eyebrow"><span class="rule"></span>06 — Developer</div>
+        <Picture src={p.img.logo} alt="R&F Group · R&F Princess Cove" widths={[250, 500]} sizes="250px" formats={['webp']} class="devlogo" />
+        <p style="margin-top:1rem;color:var(--mut-2)">R&amp;F Princess Cove is R&amp;F Group's waterfront township beside the Causeway. Phase 1 and Phase 2 (Seine Region) came first. New Casa Suites is Phase 3, and R&amp;F's own R&amp;R Sojourn can manage your home for rental.</p>
+        <ul class="list">
+          <li>Tenure<span>Freehold · no encumbrance</span></li>
+          <li>Expected completion<span>30 November 2029</span></li>
+          <li>Stage A<span>Blocks C1, C2, C3 · 2,259 homes</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec tight paper" id="faq">
+    <div class="eyebrow"><span class="rule"></span>07 — For Singapore buyers</div>
+    <h2 class="h2">Questions Joey hears every week</h2>
+    <div class="faq">
+      <details open>
+        <summary>Can Singaporeans buy at New Casa Suites?</summary>
+        <div class="a"><p>Yes, with the Johor State Authority's consent, which is a condition on this title. Foreign buyers also face a minimum purchase price, widely reported as RM1 million for apartments in Johor. Joey will tell you which layouts qualify today and take you through the consent process.</p>
+        <a class="pill dark sm" href={wa("Hi Joey, I'm buying from Singapore. Which New Casa Suites units can I buy?")} target="_blank" rel="noopener"><Icon name="wa" />Which units can I buy?</a></div>
+      </details>
+      <details>
+        <summary>What do I pay on top of the price?</summary>
+        <div class="a"><p>Stamp duty, the state levy for foreign buyers and legal fees. Ask Joey for a worked example for the layout you like.</p></div>
+      </details>
+      <details>
+        <summary>When will it be ready?</summary>
+        <div class="a"><p>Expected completion is 30 November 2029 for blocks C1, C2 and C3. The land is freehold.</p></div>
+      </details>
+      <details>
+        <summary>Can I rent it out?</summary>
+        <div class="a"><p>Yes. R&amp;F's R&amp;R Sojourn offers property management. R&amp;F calls Princess Cove Malaysia's most-viewed condominium and rental project.</p></div>
+      </details>
+      <details>
+        <summary>Where can I see it?</summary>
+        <div class="a"><p>At the R&amp;F sales gallery in Johor Bahru ({p.galleries.jb}) or at R&amp;F's Singapore sales gallery, {p.galleries.sg}. Joey books both.</p>
+        <a class="pill dark sm" href={wa("Hi Joey, I'd like to book a viewing of New Casa Suites at the JB / Singapore sales gallery.")} target="_blank" rel="noopener"><Icon name="wa" />Book a viewing</a></div>
+      </details>
+    </div>
+  </section>
+
+  <Agent waText={waText} />
+
+  <Fragment slot="fine">Renders are artist's impressions and, like the lifestyle photos, are supplied by R&amp;F Development; they are subject to change. Prices are the developer's advertised range and may change without notice. ≈ {fxNote()}. *Johor's minimum price for foreign buyers, as widely reported; foreign purchase is subject to State Authority consent. The route map is schematic.</Fragment>
+  <Legal slot="legal" title="Developer's particulars (as advertised by R&F)" legal={p.legal} />
+</Base>

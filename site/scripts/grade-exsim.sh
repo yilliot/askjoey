@@ -67,3 +67,10 @@ plan B  "$T/a-17.png" axis
 
 cp "$M/images/brand/causewayz-square-jbcc-logo_copper_transparent.png" $OUT/logo-causewayz.png
 cp "$M/images/brand/exsim-logo-tagline_transparent.png" $OUT/logo-exsim.png
+
+# Film for the hero lab (option D): EXSIM's aerial time-lapse, graded, made a seamless 7 s loop by fading its
+# last second into its first; no sound. Served from public/, with its first frame as the poster.
+V=$M/videos/site-home-hero-aerial-loop.mp4
+mkdir -p public/video
+ffmpeg -loglevel error -y -i "$V" -filter_complex "[0:v]split[a][b];[a]trim=1:8,setpts=PTS-STARTPTS[A];[b]trim=0:1,setpts=PTS-STARTPTS[B];[A][B]xfade=transition=fade:duration=1:offset=6,$G,format=yuv420p[v]" -map "[v]" -an -c:v libx264 -preset slow -crf 22 -profile:v high -movflags +faststart public/video/causewayz-aerial.mp4
+ffmpeg -loglevel error -y -i public/video/causewayz-aerial.mp4 -frames:v 1 -q:v 3 $OUT/film-poster.jpg

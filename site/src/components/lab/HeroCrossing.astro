@@ -1,0 +1,211 @@
+---
+// Hero lab A · "The crossing": one camera move from the sky to the front door, in R&F's own photographs.
+// Causeway aerial (labels pinned to the photo) → R&F Princess Cove at night → the tower at street level → the plan.
+import { Picture } from 'astro:assets';
+import Icon from '../Icon.astro';
+import Facts from '../Facts.astro';
+import ArtPicture from '../ArtPicture.astro';
+import { project as p, layouts } from '../../data/new-casa-suites';
+import { wa, rm, sgd } from '../../lib/format';
+
+const hl = layouts.two.find((l) => l.key === p.heroLayout.key)!;
+// Places on the Causeway aerial, in % of the photo (x, y). Only what the photo and R&F's brochure show for certain.
+const tags = [
+  { x: 22, y: 52, name: 'Singapore', sub: 'Woodlands', cls: 'far' },
+  { x: 40, y: 85.5, name: 'RTS Link', sub: 'Woodlands North – Bukit Chagar', cls: 'low' },
+  { x: 45.6, y: 59.2, name: 'Causeway', sub: '1,056 m', cls: 'l' },
+  { x: 53.2, y: 57.2, name: 'R&F Princess Cove', sub: 'New Casa Suites', cls: 'home r' },
+  { x: 80, y: 51, name: 'Johor Bahru', sub: 'city centre', cls: 'far' },
+];
+---
+<section class="x" id="top" aria-label={`${p.name}: from the Causeway to your front door`}>
+  <div class="x-stage">
+    <div class="x-shot s1">
+      <div class="x-cam" data-w={p.img.aerial.width} data-h={p.img.aerial.height}>
+        <Picture src={p.img.aerial} alt="The Straits of Johor, the RTS Link, the Causeway and R&F Princess Cove from the air" widths={[1200, 1800, 2400, 3000]} sizes="(max-width:760px) 260vw, 140vw" formats={['avif', 'webp']} loading="eager" fetchpriority="high" />
+        {tags.map((t) => (
+          <div class:list={['x-tag', t.cls]} style={`left:${t.x}%;top:${t.y}%`} aria-hidden="true">
+            <div class="lb"><b>{t.name}</b><small>{t.sub}</small></div><i class="ln"></i><i class="dot"></i>
+          </div>
+        ))}
+      </div>
+    </div>
+    <div class="x-shot s2"><Picture src={p.img.night} alt="R&F Princess Cove on the water at night, artist's impression" widths={[960, 1600, 2560]} sizes="100vw" formats={['avif', 'webp']} /></div>
+    <div class="x-shot s3"><ArtPicture wide={p.img.hero} tall={p.img.heroPortrait} alt={`${p.name} at dusk, artist's impression`} /></div>
+    <div class="x-shade"></div>
+
+    <div class="x-title">
+      <div class="eyebrow"><span class="rule"></span>{p.area}</div>
+      <h1><span class="ln"><span>New Casa</span></span> <span class="ln"><span><em>Suites</em></span></span></h1>
+      <p>{p.intro}</p>
+      <div class="j-cue"><i></i>Scroll · from the Causeway to your front door</div>
+    </div>
+
+    <div class="j-rail"><i></i></div>
+    <div class="j-cap c1"><div><div class="n">01 / 03</div><h2>Singapore, across the Straits</h2><p>The Causeway and the RTS Link join Woodlands to Johor Bahru, either side of R&amp;F Princess Cove.</p></div></div>
+    <div class="j-cap c2"><div><div class="n">02 / 03</div><div class="j-count"><span>650</span><small> m</small></div><p>The last 650 m under cover: the link bridge from the JB CIQ to R&amp;F Princess Cove.</p></div></div>
+    <div class="j-cap c3"><div><div class="n">03 / 03</div><h2>Through R&amp;F Mall, home</h2><p>A covered link bridge joins R&amp;F Mall to New Casa Suites.</p></div></div>
+
+    <div class="j-plan">
+      <div class="pl"><Picture src={hl.plan} alt={`Type ${hl.key} floor plan`} widths={[400, 720]} sizes="(max-width:760px) 90vw, 360px" formats={['avif', 'webp']} /></div>
+      <div class="eyebrow" style="margin-top:.5rem">Your home · Block {p.heroLayout.block}</div>
+      <h2>Type {hl.key} · {hl.name}</h2>
+      <div class="sub">{hl.beds} bed · {hl.baths} bath · {hl.sqft} sq ft ({hl.m2} m²)</div>
+      <a class="pill dark sm" href={wa(`Hi Joey, I'd like the price and availability of Type ${hl.key} (${hl.beds} bed, ${hl.sqft} sq ft) at New Casa Suites.`)} target="_blank" rel="noopener"><Icon name="wa" />Ask about Type {hl.key}</a>
+    </div>
+
+    <a class="j-skip" href="#address">Skip ↓</a>
+    <Facts project={p} />
+    <div class="j-mfacts"><div class="p"><small>From</small><b>{rm(p.priceFrom)}</b><span>≈ {sgd(p.priceFrom)}</span></div><div><small>Beds · baths</small><b>Studio–4 · 1–3</b></div><div><small>Size</small><b>313–1,555 sf</b></div></div>
+  </div>
+</section>
+
+<style>
+  .x{position:relative;background:#141312}
+  .x-stage{position:relative;height:100vh;height:100svh;min-height:560px;overflow:hidden}
+  .x-shot{position:absolute;inset:0;overflow:hidden}
+  .x-shot :global(picture),.x-shot :global(img){position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .s2,.s3{opacity:0;visibility:hidden}
+  html:not(.motion) .s3{opacity:1;visibility:visible}
+  .s3 :global(img){object-position:center 35%}
+  /* the camera: sized to cover the stage by the script, so the labels sit on the photo at any screen shape */
+  .x-cam{position:absolute;inset:0;transform-origin:53.2% 58%;--k:1}
+  .x-cam :global(img){object-position:50% 60%}
+  .x-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgb(20 19 18/.5) 0%,rgb(20 19 18/0) 26%,rgb(20 19 18/0) 52%,rgb(20 19 18/.6) 100%)}
+
+  .x-tag{position:absolute;width:0;height:0;opacity:0;--h:64px}
+  .x-tag.home{--h:120px}
+  .x-tag.low{--h:110px}
+  html:not(.motion) .x-tag{display:none}
+  .x-tag .dot{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px rgb(255 255 255/.28);transform:scale(var(--k))}
+  .x-tag .ln{position:absolute;left:-.5px;bottom:0;width:1px;height:calc(var(--h) * var(--k));background:rgb(255 255 255/.85);transform-origin:bottom}
+  .x-tag .lb{position:absolute;bottom:calc((var(--h) + 6px) * var(--k));left:0;transform:translateX(-50%) scale(var(--k));transform-origin:50% 100%;white-space:nowrap;text-align:center;color:#fff}
+  /* beside the top of the line, so neighbours don't collide */
+  .x-tag.l .lb,.x-tag.r .lb{bottom:calc((var(--h) - 3.2rem) * var(--k))}
+  .x-tag.l .lb{left:auto;right:0;padding-right:.7rem;transform:scale(var(--k));transform-origin:100% 100%;text-align:right}
+  .x-tag.r .lb{padding-left:.7rem;transform:scale(var(--k));transform-origin:0 100%;text-align:left}
+  .x-tag b{display:block;font:400 1.9rem/1.05 var(--fd);letter-spacing:-.01em;text-shadow:0 1px 2px rgb(0 0 0/.35),0 2px 22px rgb(0 0 0/.55)}
+  .x-tag small{display:block;font:500 .66rem var(--fm);letter-spacing:.06em;text-transform:uppercase;margin-top:.3rem;text-shadow:0 1px 10px rgb(0 0 0/.6)}
+  .x-tag.home b{font-size:2.7rem}
+  .x-tag.home .dot{background:var(--bronze);box-shadow:0 0 0 5px rgb(188 140 104/.35),0 0 0 14px rgb(188 140 104/.14)}
+
+  .x-title{position:absolute;left:3vw;bottom:calc(170px + 5%);z-index:4;color:#fff;max-width:min(56vw,50rem)}
+  .x-title .eyebrow{color:#F1E6DA}
+  .x-title .rule{background:#F1E6DA}
+  .x-title h1{font:400 clamp(3.4rem,8.6vw,8.4rem)/.94 var(--fd);letter-spacing:-.025em;margin:.8rem 0 1rem}
+  .x-title h1 .ln{display:inline-block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em;vertical-align:top}
+  .x-title h1 .ln > span{display:inline-block}
+  .x-title h1 em{font-style:italic;color:#F3E3D2}
+  .x-title p{font-size:1.04rem;max-width:30rem;opacity:.95}
+  .x :global(.facts){position:absolute;left:3vw;right:3vw;bottom:22px;z-index:6}
+  .x .j-cap{top:16%}
+  .x .j-rail{top:16%}
+  html:not(.motion) .x .j-cue{display:none}
+
+  @media (max-width:760px){
+    .x-cam :global(img){object-position:47% 60%}
+    .x-title{left:1.2rem;right:1.2rem;bottom:calc(76px + 64px + 1.8rem + env(safe-area-inset-bottom));max-width:none}
+    .x-title h1{font-size:clamp(3rem,15vw,4.2rem)}
+    .x-title p{font-size:.94rem}
+    .x-tag.far{display:none}
+    .x-tag{--h:44px}
+    .x-tag.home{--h:84px}
+    .x-tag.low{--h:70px}
+    .x-tag b{font-size:1.3rem}
+    .x-tag.home b{font-size:1.7rem}
+    .x-tag.l .lb,.x-tag.r .lb{bottom:calc((var(--h) - 2.4rem) * var(--k))}
+    /* no room to the right on a phone: home's label also sits to the left of its line, above the Causeway's */
+    .x-tag.r .lb{left:auto;right:0;padding:0 .7rem 0 0;transform-origin:100% 100%;text-align:right}
+    .x .j-cap{top:11%;width:calc(62% - 22px)}
+    .x :global(.facts){display:none}
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, motionOn } from '../../scripts/motion';
+
+  const x = document.querySelector<HTMLElement>('.x');
+  if (x && motionOn) {
+    const q = gsap.utils.selector(x);
+    const stage = q('.x-stage')[0] as HTMLElement;
+    const cam = q('.x-cam')[0] as HTMLElement;
+    const nav = document.getElementById('nav')!;
+    const iw = Number(cam.dataset.w), ih = Number(cam.dataset.h);
+    const PHONE = '(max-width: 760px)';
+
+    // cover the stage with the photo, keeping the towers in view; labels are % of the photo, so they stay on their places
+    const fit = () => {
+      const W = stage.clientWidth, H = stage.clientHeight;
+      const s = Math.max(W / iw, H / ih);
+      const w = iw * s, h = ih * s;
+      const px = matchMedia(PHONE).matches ? 0.47 : 0.5;
+      gsap.set(cam, { width: w, height: h, left: (W - w) * px, top: (H - h) * 0.6, right: 'auto', bottom: 'auto' });
+    };
+    fit();
+    addEventListener('resize', fit);
+    const k = (v: number) => gsap.set(cam, { '--k': 1 / v });
+
+    // on arrival: the photo settles, the title rises out of its lines
+    gsap.fromTo(cam, { scale: 1.1 }, { scale: 1, duration: 2.6, ease: 'silk', onUpdate() { k(gsap.getProperty(cam, 'scale') as number); } });
+    gsap.from(q('.x-title h1 .ln > span'), { yPercent: 110, duration: 1.5, ease: 'silk', stagger: 0.12, delay: 0.2 });
+    gsap.from(q('.x-title .eyebrow, .x-title p, .x-title .j-cue'), { autoAlpha: 0, y: 18, duration: 1.2, ease: 'silk', stagger: 0.08, delay: 0.55 });
+    gsap.from(q('.facts, .j-mfacts'), { autoAlpha: 0, y: 24, duration: 1.2, ease: 'silk', delay: 0.8 });
+
+    const mm = gsap.matchMedia();
+    mm.add({ phone: PHONE, desk: '(min-width: 761px)' }, (ctx) => {
+      const phone = !!ctx.conditions?.phone;
+      gsap.set(q('.x-tag'), { opacity: 0 });
+      gsap.set(q('.x-tag .ln'), { scaleY: 0 });
+      gsap.set(q('.j-cap'), { autoAlpha: 0, y: 16 });
+      gsap.set(q('.j-plan'), { autoAlpha: 0, x: 28, clipPath: 'inset(0% 0% 0% 100% round 18px)' });
+      const count = q('.j-count span')[0] as HTMLElement;
+      const n = { v: 0 };
+      const zoom = { v: 1 };
+
+      const tl = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: { trigger: x, start: 'top top', end: () => '+=' + Math.round(innerHeight * (phone ? 3 : 2.8)), pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true },
+      });
+      tl.set({}, {}, 100);
+
+      // 1 · the title leaves; the places light up on the photo, one by one
+      tl.to(q('.x-title'), { autoAlpha: 0, y: -40, filter: 'blur(8px)', duration: 9 }, 2);
+      tl.to(q('.j-cue'), { autoAlpha: 0, duration: 3 }, 0);
+      tl.fromTo(q('.j-rail'), { opacity: 0 }, { opacity: 1, duration: 3 }, 8);
+      tl.fromTo(q('.j-rail i'), { scaleY: 0 }, { scaleY: 1, duration: 74 }, 8);
+      q('.x-tag').forEach((t, i) => {
+        tl.to(t, { opacity: 1, duration: 3 }, 8 + i * 2.2);
+        tl.to(t.querySelector('.ln'), { scaleY: 1, duration: 4, ease: 'silk' }, 8 + i * 2.2);
+      });
+      cap(tl, q('.j-cap.c1'), 12, 32);
+
+      // 2 · the camera falls toward the towers; everything but home lets go
+      tl.to(zoom, { v: phone ? 2.1 : 2.6, duration: 30, ease: 'power1.in', onUpdate: () => { gsap.set(cam, { scale: zoom.v }); k(zoom.v); } }, 20);
+      tl.to(q('.x-tag:not(.home)'), { opacity: 0, duration: 5 }, 30);
+      tl.to(q('.x-tag.home'), { opacity: 0, duration: 4 }, 44);
+
+      // 3 · through the cloud into the night aerial: it lands from 1.3× and out of focus, the aerial blurs away
+      tl.to(q('.s1'), { filter: 'blur(10px)', autoAlpha: 0, duration: 8 }, 44);
+      tl.fromTo(q('.s2'), { autoAlpha: 0, scale: 1.32, filter: 'blur(12px)' }, { autoAlpha: 1, scale: 1.04, filter: 'blur(0px)', duration: 12, ease: 'power2.out' }, 44);
+      tl.to(q('.s2'), { scale: 1.16, duration: 18 }, 56);
+      cap(tl, q('.j-cap.c2'), 48, 64);
+      tl.fromTo(n, { v: 0 }, { v: 650, duration: 12, onUpdate: () => { count.textContent = String(Math.round(n.v)); } }, 49);
+
+      // 4 · down to the street: the tower at dusk, then your plan
+      tl.to(q('.s2'), { filter: 'blur(10px)', autoAlpha: 0, duration: 8 }, 66);
+      tl.fromTo(q('.s3'), { autoAlpha: 0, scale: 1.28, filter: 'blur(12px)' }, { autoAlpha: 1, scale: 1, filter: 'blur(0px)', duration: 13, ease: 'power2.out' }, 66);
+      cap(tl, q('.j-cap.c3'), 70, 82);
+      tl.to(q('.j-rail'), { opacity: 0, duration: 4 }, 84);
+      tl.to(q('.j-plan'), { autoAlpha: 1, x: 0, clipPath: 'inset(0% 0% 0% 0% round 18px)', duration: 10, ease: 'silk' }, 86);
+      gsap.set(nav, { '--nav-fg': '#FFFFFF' });
+
+      return () => { count.textContent = '650'; gsap.set(cam, { scale: 1 }); k(1); };
+    });
+    ScrollTrigger.sort();
+  }
+
+  function cap(tl: gsap.core.Timeline, el: Element[], inAt: number, outAt: number) {
+    tl.to(el, { autoAlpha: 1, y: 0, duration: 4, ease: 'silk' }, inAt);
+    tl.to(el, { autoAlpha: 0, y: -12, duration: 3 }, outAt);
+  }
+</script>

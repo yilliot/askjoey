@@ -1,0 +1,43 @@
+---
+// Hero lab: four candidate openings, each in front of the real page. Prototypes for El's choice; not linked from the site.
+import { Picture } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import { project as ncs } from '../../data/new-casa-suites';
+import { project as cws } from '../../data/causewayz-square';
+import poster from '../../assets/img/exsim/film-poster.jpg';
+
+const opts = [
+  { k: 'A', href: '/lab/a/', name: 'The crossing', img: ncs.img.aerial, for: 'New Casa Suites', line: "R&F's Causeway aerial, full screen, with Singapore, the RTS Link, the Causeway and Princess Cove pinned on the photo. The camera falls toward the towers, through the night aerial, down to the tower at street level and the plan." },
+  { k: 'B', href: '/lab/b/', name: 'Through the name', img: ncs.img.hero, for: 'New Casa Suites', line: 'The tower shows only through the letters of "New Casa Suites". The scroll flies through the N until the photo fills the screen.' },
+  { k: 'C', href: '/lab/c/', name: 'The window opens', img: ncs.img.heroPortrait, for: 'New Casa Suites', line: 'A framed print of the tower between "New Casa" and "Suites". The scroll opens the frame to full screen while the words part.' },
+  { k: 'D', href: '/lab/d/', name: 'The film', img: poster, for: 'Causewayz Square', line: "EXSIM's aerial time-lapse, full screen and silent. The scroll folds the film into a frame while the distances come in." },
+];
+---
+<Base page="lab" title="Hero lab · Ask Joey" description="Hero prototypes" og={ncs.img.hero} brand={{ name: 'Hero lab', sub: 'Prototypes · not part of the site' }} links={[{ href: '/new-casa-suites/', label: 'Live: New Casa Suites' }, { href: '/causewayz-square/', label: 'Live: Causewayz Square' }]} waText="Hi Joey">
+  <section class="sec lab">
+    <div class="eyebrow"><span class="rule"></span>Hero lab · 13 Oct 2026</div>
+    <h1 class="h2">Four openings to try.<br />Scroll each one slowly, then fast.</h1>
+    <p class="muted" style="max-width:40rem;margin-top:1rem">Each option sits in front of the real page, so you can feel the hand-off into the content. The bar at the top of each page switches between them.</p>
+    <div class="grid">
+      {opts.map((o) => (
+        <a class="card" href={o.href}>
+          <div class="ph"><Picture src={o.img} alt="" widths={[500, 900]} sizes="(max-width:760px) 100vw, 45vw" formats={['avif', 'webp']} /></div>
+          <div class="tx"><small>{o.k} · for {o.for}</small><h2>{o.name}</h2><p>{o.line}</p><span class="go">Open {o.k} →</span></div>
+        </a>
+      ))}
+    </div>
+  </section>
+</Base>
+<style>
+  .lab{padding-top:calc(var(--nav-h) + 3rem)}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;margin-top:2.4rem}
+  .card{display:grid;grid-template-columns:1fr 1.1fr;background:#fff;border-radius:18px;overflow:hidden;text-decoration:none;color:inherit;transition:transform .5s var(--ease-silk)}
+  .card:hover{transform:translateY(-3px)}
+  .card .ph{min-height:220px}
+  .tx{padding:1.3rem 1.4rem}
+  .tx small{font:600 .66rem var(--ft);letter-spacing:.16em;text-transform:uppercase;color:var(--bronze-ink)}
+  .tx h2{font:400 1.9rem/1.05 var(--fd);color:var(--ink);margin:.35rem 0 .5rem}
+  .tx p{font-size:.9rem;color:var(--mut-2)}
+  .go{display:inline-block;margin-top:.8rem;font-weight:600;font-size:.86rem;color:var(--bronze-ink)}
+  @media (max-width:760px){ .grid,.card{grid-template-columns:1fr} }
+</style>

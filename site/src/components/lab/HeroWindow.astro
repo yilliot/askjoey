@@ -1,0 +1,114 @@
+---
+// Hero lab C · "The window opens": a framed print of the tower between the two halves of the name;
+// the scroll opens the frame to full bleed while the words part. Without the motion script: the plain photo hero.
+import Facts from '../Facts.astro';
+import ArtPicture from '../ArtPicture.astro';
+import { project as p } from '../../data/new-casa-suites';
+import { rm, sgd } from '../../lib/format';
+---
+<section class="wn" id="top" aria-label={p.name}>
+  <div class="wn-stage">
+    <div class="wn-photo"><ArtPicture wide={p.img.hero} tall={p.img.heroPortrait} alt={`${p.name} at dusk, artist's impression`} eager /></div>
+    <div class="wn-shade"></div>
+    <div class="wn-h" aria-hidden="true"><span class="l"><span>New Casa</span></span><span class="r"><span><em>Suites</em></span></span></div>
+    <div class="wn-top"><div class="eyebrow"><span class="rule"></span>{p.area}</div><div class="mono">{p.coord}</div></div>
+    <div class="wn-foot"><p>{p.intro}</p><div class="j-cue"><i></i>Scroll</div></div>
+    <div class="wn-title">
+      <div class="eyebrow"><span class="rule"></span>{p.area}</div>
+      <h1>New Casa <em>Suites</em></h1>
+      <p>{p.intro}</p>
+    </div>
+    <Facts project={p} />
+    <div class="j-mfacts"><div class="p"><small>From</small><b>{rm(p.priceFrom)}</b><span>≈ {sgd(p.priceFrom)}</span></div><div><small>Beds · baths</small><b>Studio–4 · 1–3</b></div><div><small>Size</small><b>313–1,555 sf</b></div></div>
+  </div>
+</section>
+
+<style>
+  .wn{position:relative;background:var(--ivory)}
+  .wn-stage{position:relative;height:100vh;height:100svh;min-height:560px;overflow:hidden}
+  .wn-photo{position:absolute;inset:0;overflow:hidden}
+  .wn-photo :global(picture),.wn-photo :global(img){position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:57% 35%}
+  .wn-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgb(20 19 18/.45) 0%,rgb(20 19 18/0) 28%,rgb(20 19 18/0) 50%,rgb(20 19 18/.6) 100%)}
+  .wn-h{position:absolute;inset:0;z-index:3;pointer-events:none;display:none;font:400 clamp(3rem,7.4vw,8.6rem)/.9 var(--fd);white-space:nowrap;letter-spacing:-.03em;color:var(--ink)}
+  .wn-h > span{position:absolute;top:50%;overflow:hidden;padding-bottom:.1em}
+  .wn-h > span > span{display:inline-block}
+  .wn-h .l{right:calc(50% + 12vw + 2vw);transform:translateY(-62%)}
+  .wn-h .r{left:calc(50% + 12vw + 2vw);transform:translateY(-62%)}
+  .wn-h em{font-style:italic;color:var(--bronze-ink)}
+  .wn-top,.wn-foot{position:absolute;left:3vw;right:3vw;z-index:4;color:var(--char);display:none}
+  .wn-top{top:calc(var(--nav-h) + 1.2rem);justify-content:space-between;align-items:baseline}
+  .wn-foot{bottom:calc(150px + 3%);justify-content:space-between;align-items:flex-end;gap:2rem}
+  .wn-foot p{max-width:22rem;color:var(--mut-2);font-size:.95rem}
+  .wn-foot .j-cue{color:var(--mut);margin:0}
+  .wn-foot .j-cue i{background:linear-gradient(var(--char),transparent)}
+  .wn-title{position:absolute;left:3vw;bottom:calc(170px + 5%);z-index:4;color:#fff;max-width:min(52vw,46rem)}
+  .wn-title .eyebrow{color:#F1E6DA}
+  .wn-title .rule{background:#F1E6DA}
+  .wn-title h1{font:400 clamp(3rem,6.4vw,5.75rem)/1.02 var(--fd);letter-spacing:-.018em;margin:.8rem 0 .9rem}
+  .wn-title h1 em{font-style:italic;color:#F3E3D2}
+  .wn-title p{font-size:1.04rem;max-width:30rem;opacity:.95}
+  .wn :global(.facts){position:absolute;left:3vw;right:3vw;bottom:22px;z-index:6}
+  :global(html.motion) .wn-h{display:block}
+  :global(html.motion) .wn-top,:global(html.motion) .wn-foot{display:flex}
+  :global(html.motion) .wn-title{opacity:0;visibility:hidden}
+  :global(body:has(.wn)) :global(.nav.over){--nav-fg:var(--char)}
+
+  @media (max-width:760px){
+    .wn-h{font-size:clamp(2.8rem,15vw,4.4rem);text-align:center}
+    .wn-h .l,.wn-h .r{left:0;right:0}
+    .wn-h .l{top:auto;bottom:calc(76% + .2rem);transform:none}
+    .wn-h .r{top:calc(68% + .3rem);transform:none}
+    .wn-top{flex-direction:column;gap:.3rem}
+    .wn-foot{display:none!important}
+    .wn-title{left:1.2rem;right:1.2rem;bottom:calc(76px + 64px + 1.8rem + env(safe-area-inset-bottom));max-width:none}
+    .wn-title h1{font-size:clamp(2.7rem,13vw,3.4rem)}
+    .wn :global(.facts){display:none}
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, motionOn } from '../../scripts/motion';
+
+  const wn = document.querySelector<HTMLElement>('.wn');
+  if (wn && motionOn) {
+    const q = gsap.utils.selector(wn);
+    const nav = document.getElementById('nav')!;
+    const mm = gsap.matchMedia();
+    mm.add({ phone: '(max-width: 760px)', desk: '(min-width: 761px)' }, (ctx) => {
+      const phone = !!ctx.conditions?.phone;
+      // the print: a portrait frame in the middle (desktop) or between the two lines (phone)
+      const frame = phone ? 'inset(25% 12% 33% 12% round 999px 999px 14px 14px)' : 'inset(15% 38% 17% 38% round 999px 999px 12px 12px)';
+      const full = 'inset(0% 0% 0% 0% round 0px 0px 0px 0px)';
+      gsap.set(nav, { '--nav-fg': '#2A2826' });
+      gsap.set(q('.wn-shade'), { opacity: 0 });
+
+      // arrival: the print opens from a sliver, the words rise out of their lines
+      gsap.fromTo(q('.wn-photo'), { clipPath: phone ? 'inset(67% 12% 33% 12% round 999px 999px 14px 14px)' : 'inset(83% 38% 17% 38% round 999px 999px 12px 12px)' }, { clipPath: frame, duration: 1.6, ease: 'silk', delay: 0.1 });
+      gsap.fromTo(q('.wn-photo img'), { scale: 1.5 }, { scale: 1.3, duration: 2.2, ease: 'silk' });
+      gsap.from(q('.wn-h > span > span'), { yPercent: 110, duration: 1.5, ease: 'silk', stagger: 0.12, delay: 0.35 });
+      gsap.from(q('.wn-top, .wn-foot'), { autoAlpha: 0, y: 14, duration: 1.2, ease: 'silk', stagger: 0.1, delay: 0.7 });
+      gsap.from(q('.facts, .j-mfacts'), { autoAlpha: 0, y: 24, duration: 1.2, ease: 'silk', delay: 0.9 });
+
+      const tl = gsap.timeline({
+        defaults: { ease: 'none' },
+        scrollTrigger: { trigger: wn, start: 'top top', end: () => '+=' + Math.round(innerHeight * 1.6), pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true },
+      });
+      tl.set({}, {}, 100);
+      tl.fromTo(q('.wn-photo'), { clipPath: frame }, { clipPath: full, duration: 60, ease: 'glide', immediateRender: false }, 0);
+      tl.fromTo(q('.wn-photo img'), { scale: 1.3 }, { scale: 1, duration: 70, ease: 'power2.out', immediateRender: false }, 0);
+      if (phone) {
+        tl.to(q('.wn-h .l'), { yPercent: -160, autoAlpha: 0, duration: 40, ease: 'power2.in' }, 2);
+        tl.to(q('.wn-h .r'), { yPercent: 160, autoAlpha: 0, duration: 40, ease: 'power2.in' }, 2);
+      } else {
+        tl.to(q('.wn-h .l'), { xPercent: -70, autoAlpha: 0, duration: 46, ease: 'power2.in' }, 2);
+        tl.to(q('.wn-h .r'), { xPercent: 70, autoAlpha: 0, duration: 46, ease: 'power2.in' }, 2);
+      }
+      tl.to(q('.wn-top, .wn-foot'), { autoAlpha: 0, duration: 12 }, 0);
+      tl.to(q('.wn-shade'), { opacity: 1, duration: 20 }, 40);
+      tl.to(nav, { '--nav-fg': '#FFFFFF', duration: 10 }, 40);
+      tl.to(q('.wn-title'), { autoAlpha: 1, duration: 1 }, 64);
+      tl.from(q('.wn-title > *'), { y: 30, filter: 'blur(6px)', duration: 20, stagger: 4, ease: 'silk' }, 64);
+    });
+    ScrollTrigger.sort();
+  }
+</script>

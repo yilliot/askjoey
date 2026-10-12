@@ -1,0 +1,24 @@
+---
+// A small switcher on the hero-lab pages, so the options can be compared back to back. Not part of the site.
+interface Props { current: string }
+const { current } = Astro.props;
+const opts = [
+  { k: 'a', label: 'A · Crossing', href: '/lab/a/' },
+  { k: 'b', label: 'B · Name', href: '/lab/b/' },
+  { k: 'c', label: 'C · Window', href: '/lab/c/' },
+  { k: 'd', label: 'D · Film', href: '/lab/d/' },
+  { k: 'now', label: 'Live today', href: '/new-casa-suites/' },
+];
+---
+<nav class="labbar" aria-label="Hero lab">
+  <a href="/lab/" class="home">Hero lab</a>
+  {opts.map((o) => <a href={o.href} aria-current={o.k === current ? 'page' : undefined}>{o.label}</a>)}
+</nav>
+<style>
+  .labbar{position:fixed;left:50%;top:calc(var(--nav-h) + 10px);transform:translateX(-50%);z-index:45;display:flex;gap:2px;padding:3px;border-radius:999px;background:rgb(20 19 18/.78);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);font:500 .7rem var(--fm);letter-spacing:.02em;white-space:nowrap;max-width:calc(100vw - 16px);overflow-x:auto;scrollbar-width:none}
+  .labbar a{color:#F3EEE6;text-decoration:none;padding:.38rem .7rem;border-radius:999px;opacity:.8}
+  .labbar a:hover{opacity:1}
+  .labbar a[aria-current]{background:#F3EEE6;color:#141312;opacity:1}
+  .labbar .home{color:var(--bronze);opacity:1}
+  @media (max-width:760px){ .labbar{top:calc(var(--nav-h) + 4px);font-size:.62rem} .labbar a{padding:.32rem .5rem} }
+</style>

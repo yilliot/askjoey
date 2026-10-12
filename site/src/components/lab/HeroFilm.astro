@@ -1,0 +1,123 @@
+---
+// Hero lab D · "The film" (Causewayz Square): EXSIM's aerial time-lapse, full bleed and silent; the scroll folds
+// the film into a frame while the distances come in. Without the motion script: the poster frame, still.
+import { getImage } from 'astro:assets';
+import Facts from '../Facts.astro';
+import { project as p } from '../../data/causewayz-square';
+import poster from '../../assets/img/exsim/film-poster.jpg';
+import { rm, sgd } from '../../lib/format';
+
+const still = await getImage({ src: poster, width: 1280, format: 'webp', quality: 80 });
+---
+<section class="fm" id="top" aria-label={p.name}>
+  <div class="fm-stage">
+    <div class="fm-media">
+      <video muted loop playsinline preload="metadata" poster={still.src} aria-label="Causewayz Square in the Johor Bahru skyline at dusk, time-lapse, artist's impression">
+        <source src="/video/causewayz-aerial.mp4" type="video/mp4" />
+      </video>
+      <div class="fm-shade"></div>
+    </div>
+    <div class="j-coord mono" style="z-index:3">1.47° N · 103.77° E<br />EXSIM film · artist's impression</div>
+    <div class="fm-title">
+      <div class="eyebrow"><span class="rule"></span>{p.area}</div>
+      <h1><span class="ln"><span>Causewayz</span></span> <span class="ln"><span><em>Square</em></span></span></h1>
+      <p>{p.intro}</p>
+    </div>
+    <div class="fm-side">
+      <div class="eyebrow"><span class="rule"></span>{p.place}</div>
+      <h2>At the JB end<br />of the Causeway</h2>
+      <ul>
+        <li><b><span data-to="600">600</span> m</b><small>approx. to the JB CIQ, by EXSIM's approved link bridge</small></li>
+        <li><b><span data-to="900">900</span> m</b><small>approx. to RTS Link Bukit Chagar</small></li>
+        <li><b><span data-to="3692">3,692</span></b><small>homes in Axis, Brixton and Dover</small></li>
+      </ul>
+    </div>
+    <Facts project={p} />
+    <div class="j-mfacts"><div class="p"><small>From</small><b>{rm(p.priceFrom)}</b><span>≈ {sgd(p.priceFrom)}</span></div><div><small>Beds · baths</small><b>Studio–3 · 1–2</b></div><div><small>Size</small><b>366–850 sf</b></div></div>
+  </div>
+</section>
+
+<style>
+  .fm{position:relative;background:var(--ivory)}
+  .fm-stage{position:relative;height:100vh;height:100svh;min-height:600px;overflow:hidden}
+  .fm-media{position:absolute;inset:0;background:#2a2826;overflow:hidden}
+  .fm-media video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:48% 92%;transform-origin:46% 88%}
+  .fm-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgb(20 19 18/.45) 0%,rgb(20 19 18/0) 30%,rgb(20 19 18/.05) 50%,rgb(20 19 18/.62) 100%)}
+  .fm-title{position:absolute;left:3vw;right:3vw;bottom:calc(170px + 5%);z-index:3;max-width:56rem;color:#fff}
+  .fm-title .eyebrow{color:#F1E6DA}
+  .fm-title .rule{background:#F1E6DA}
+  .fm-title h1{font:400 clamp(3.2rem,8vw,7.6rem)/.96 var(--fd);letter-spacing:-.025em;margin:.8rem 0 1rem}
+  .fm-title h1 .ln{display:inline-block;overflow:hidden;padding-bottom:.08em;margin-bottom:-.08em;vertical-align:top}
+  .fm-title h1 .ln > span{display:inline-block}
+  .fm-title h1 em{font-style:italic;color:#F3E3D2}
+  .fm-title p{font-size:1.04rem;max-width:32rem;opacity:.95}
+  .fm-side{position:absolute;left:3vw;top:calc(var(--nav-h) + 8%);width:36vw;z-index:3;color:var(--char);opacity:0;visibility:hidden}
+  .fm-side h2{font:400 clamp(2.2rem,3.8vw,3.6rem)/1.04 var(--fd);letter-spacing:-.015em;color:var(--ink);margin:.8rem 0 1.6rem}
+  .fm-side ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--stone-2)}
+  .fm-side li{display:grid;grid-template-columns:9.5rem 1fr;gap:1rem;align-items:baseline;padding:1rem 0;border-bottom:1px solid var(--stone-2)}
+  .fm-side b{font:400 2.4rem/1 var(--fd);color:var(--ink);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .fm-side small{font-size:.86rem;color:var(--mut)}
+  .fm :global(.facts){position:absolute;left:3vw;right:3vw;bottom:22px;z-index:6}
+
+  @media (max-width:760px){
+    .fm-title{left:1.2rem;right:1.2rem;bottom:calc(76px + 64px + 1.8rem + env(safe-area-inset-bottom))}
+    .fm-title h1{font-size:clamp(2.9rem,14vw,4rem)}
+    .fm-title p{font-size:.94rem}
+    .fm-side{left:1.2rem;right:1.2rem;width:auto;top:auto;bottom:calc(76px + 64px + 1rem + env(safe-area-inset-bottom))}
+    .fm-side h2{font-size:1.9rem;margin:.5rem 0 .8rem}
+    .fm-side li{grid-template-columns:6.5rem 1fr;padding:.55rem 0}
+    .fm-side b{font-size:1.6rem}
+    .fm-side small{font-size:.76rem}
+    .fm :global(.facts){display:none}
+    .fm .j-coord{display:none}
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, motionOn } from '../../scripts/motion';
+
+  const fm = document.querySelector<HTMLElement>('.fm');
+  if (fm) {
+    const q = gsap.utils.selector(fm);
+    const video = q('video')[0] as HTMLVideoElement;
+    if (motionOn) {
+      // the film plays only for visitors who haven't asked for less motion, and pauses once it is off screen
+      video.preload = 'auto';
+      video.play().catch(() => {});
+      new IntersectionObserver(([e]) => (e.isIntersecting ? video.play().catch(() => {}) : video.pause())).observe(video);
+
+      const nav = document.getElementById('nav')!;
+      gsap.fromTo(q('.fm-media'), { scale: 1.08 }, { scale: 1, duration: 2.6, ease: 'silk' });
+      gsap.from(q('.fm-title h1 .ln > span'), { yPercent: 110, duration: 1.5, ease: 'silk', stagger: 0.12, delay: 0.2 });
+      gsap.from(q('.fm-title .eyebrow, .fm-title p'), { autoAlpha: 0, y: 18, duration: 1.2, ease: 'silk', stagger: 0.08, delay: 0.55 });
+      gsap.from(q('.facts, .j-mfacts'), { autoAlpha: 0, y: 24, duration: 1.2, ease: 'silk', delay: 0.8 });
+
+      const mm = gsap.matchMedia();
+      mm.add({ phone: '(max-width: 760px)', desk: '(min-width: 761px)' }, (ctx) => {
+        const phone = !!ctx.conditions?.phone;
+        const card = phone ? 'inset(11% 4% 50% 4% round 16px)' : 'inset(13% 3% 25% 43% round 20px)';
+        const nums = q('.fm-side [data-to]') as HTMLElement[];
+        const vals = nums.map(() => ({ v: 0 }));
+        const nf = new Intl.NumberFormat('en-MY');
+        gsap.set(q('.fm-side'), { autoAlpha: 0, y: 30 });
+        const tl = gsap.timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: { trigger: fm, start: 'top top', end: () => '+=' + Math.round(innerHeight * 1.5), pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true },
+        });
+        tl.set({}, {}, 100);
+        tl.to(q('.fm-title'), { autoAlpha: 0, y: -40, filter: 'blur(8px)', duration: 18 }, 0);
+        tl.to(q('.j-coord'), { autoAlpha: 0, duration: 8 }, 0);
+        tl.fromTo(q('.fm-media'), { clipPath: 'inset(0% 0% 0% 0% round 0px)' }, { clipPath: card, duration: 46, ease: 'glide' }, 10);
+        // the frame is a window onto the full-screen film: slide the film so the towers land in the middle of it
+        tl.fromTo(q('video'), { scale: 1, x: 0, y: 0 }, { scale: 1.12, x: () => innerWidth * (phone ? 0.06 : 0.27), y: () => -innerHeight * (phone ? 0.36 : 0.22), duration: 46, ease: 'glide' }, 10);
+        tl.to(q('.fm-shade'), { opacity: 0.35, duration: 30 }, 10);
+        tl.to(nav, { '--nav-fg': '#2A2826', duration: 12 }, 18);
+        tl.to(q('.fm-side'), { autoAlpha: 1, y: 0, duration: 18, ease: 'silk' }, 40);
+        nums.forEach((el, i) => tl.fromTo(vals[i], { v: 0 }, { v: Number(el.dataset.to), duration: 26, ease: 'power2.out', onUpdate: () => { el.textContent = nf.format(Math.round(vals[i].v)); } }, 44 + i * 4));
+        gsap.set(nav, { '--nav-fg': '#FFFFFF' });
+        return () => nums.forEach((el) => (el.textContent = nf.format(Number(el.dataset.to))));
+      });
+      ScrollTrigger.sort();
+    }
+  }
+</script>
