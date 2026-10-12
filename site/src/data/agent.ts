@@ -4,9 +4,9 @@ export const agent = {
   role: 'Real Estate Negotiator',
   ren: 'REN 80914',
   agency: 'IQI Realty Sdn Bhd',
-  // The agency's Board of Valuers firm number, "E (1) ####". Malaysian property ads must show it
-  // beside the REN. Empty until Joey confirms it; the footer then shows it automatically.
-  agencyReg: '',
+  // The agency's Board of Valuers firm number: Malaysian property ads show it beside the REN.
+  // E (1) 1584 is what IQI Realty prints on its own causewayz.com agent site; Joey to confirm.
+  agencyReg: 'E (1) 1584',
   // Agency's company (SSM) registration, as given by El on 12 Oct 2026.
   company: { name: 'IQI Holdings Sdn Bhd', reg: '201201034354 (1018842-U)' },
   whatsapp: '601165039733', // wa.me format: country code + number, digits only

@@ -21,4 +21,4 @@ bash ../deploy/deploy.sh                # push to GitHub; axon pulls, builds, sw
 bash ../deploy/deploy.sh rollback       # back to the previous release
 ```
 
-Still from Joey: the agency's Board of Valuers firm number "E (1) …" (`site/src/data/agent.ts` → `agencyReg`; the SSM company number is in), per-layout price lists.
+Still from Joey: confirm the agency firm number E (1) 1584 (`site/src/data/agent.ts`), per-layout price lists.

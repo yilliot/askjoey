@@ -1,0 +1,215 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import ArtPicture from '../components/ArtPicture.astro';
+import Facts from '../components/Facts.astro';
+import Residences from '../components/Residences.astro';
+import Agent from '../components/Agent.astro';
+import Legal from '../components/Legal.astro';
+import Icon from '../components/Icon.astro';
+import { project as p, groups, towers } from '../data/causewayz-square';
+import { rm, sgd, wa, fxNote } from '../lib/format';
+
+const waText = "Hi Joey, I'm interested in Causewayz Square @ JBCC by EXSIM.";
+const links = [
+  { href: '#towers', label: 'Towers' },
+  { href: '#residences', label: 'Residences' },
+  { href: '#facilities', label: 'Facilities' },
+  { href: '#location', label: 'Location' },
+  { href: '#faq', label: 'FAQ' },
+  { href: '/', label: 'All projects' },
+];
+const img = p.img;
+const pic = (src: any, alt: string, sizes: string, widths = [500, 900, 1300, 1650]) => ({ src, alt, sizes, widths, formats: ['avif', 'webp'] as const });
+---
+<Base
+  page="causewayz-square"
+  title="Causewayz Square @ JBCC by EXSIM, Johor Bahru City Centre — Ask Joey"
+  description="Freehold homes in Johor Bahru City Centre, about 600 m from the JB CIQ by an approved link bridge and 900 m from the RTS Link. Studio to 3 bedrooms, from RM593,600. Joey Lee, REN 80914, IQI Realty."
+  og={img.hero}
+  brand={{ name: p.name, sub: p.place, href: '/causewayz-square/' }}
+  links={links}
+  over
+  waText={waText}
+>
+  <section class="phero" aria-label={p.name}>
+    <div class="bg"><ArtPicture wide={img.hero} tall={img.heroPortrait} alt="Causewayz Square's towers from the road, artist's impression" eager /></div>
+    <div class="j-coord mono" style="z-index:3">1.47° N · 103.77° E<br />Artist's impression</div>
+    <div class="in">
+      <div class="eyebrow"><span class="rule"></span>{p.area}</div>
+      <h1>Causewayz <em>Square</em></h1>
+      <p>{p.intro}</p>
+    </div>
+    <Facts project={p} />
+    <div class="j-mfacts"><div class="p"><small>From</small><b>{rm(p.priceFrom)}</b><span>≈ {sgd(p.priceFrom)}</span></div><div><small>Beds · baths</small><b>Studio–3 · 1–2</b></div><div><small>Size</small><b>366–850 sf</b></div></div>
+  </section>
+
+  <section class="sec" id="address">
+    <div class="intro">
+      <div class="rv"><div class="eyebrow"><span class="rule"></span>01 — The address</div></div>
+      <p class="lead rv">Causewayz Square stands on 7.7 freehold acres in Johor Bahru City Centre, at the JB end of the Causeway. EXSIM's <em>approved link bridge</em> leads about 600 m to the CIQ, and the RTS Link station at Bukit Chagar is about 900 m away. Over the 90,000 sq ft retail podium sit Axis, Brixton and Dover, with Coven to follow.</p>
+    </div>
+    <div class="stats rv">
+      <div><b data-count="600">600 m</b><span>approx. to JB CIQ, by link bridge</span></div>
+      <div><b data-count="900">900 m</b><span>approx. to RTS Link Bukit Chagar</span></div>
+      <div><b data-count="3692">3,692</b><span>homes in Axis, Brixton and Dover</span></div>
+      <div><b>35+</b><span>facilities over 123,000 sq ft</span></div>
+    </div>
+  </section>
+
+  <div class="band px">
+    <div class="layer"><Picture {...pic(img.aerial, "Causewayz Square with the Causeway, the Straits and Singapore behind, aerial photomontage", '100vw', [960, 1400, 1728])} /></div>
+    <div class="over"><div class="serif">At the JB end of the Causeway</div><div class="mono" style="opacity:.85">Causewayz Square, the Straits and Singapore · aerial, artist's impression</div></div>
+  </div>
+
+  <section class="sec" id="towers">
+    <div class="head rv">
+      <div><div class="eyebrow"><span class="rule"></span>02 — Three towers on sale</div><h2 class="h2">Axis, Brixton<br />and Dover</h2></div>
+      <p>One podium, three characters. Axis suits investors and short stays; Brixton and Dover are family homes around a park on Level 12.</p>
+    </div>
+    <div class="towers">
+      {towers.map((t) => (
+        <article class="tower rv">
+          <div class="ph rv-img"><Picture {...pic(t.img, t.alt, '(max-width:760px) 100vw, 31vw', [500, 800, 1200])} /></div>
+          <div class="eyebrow" style="margin-top:1.1rem">{t.units.toLocaleString('en')} homes · {t.sf} sq ft</div>
+          <h3>{t.name}</h3>
+          <p>{t.line}</p>
+          <div class="from">From <b>{rm(t.from)}</b> <span>≈ {sgd(t.from)}</span></div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="sec paper" id="residences">
+    <div class="head rv">
+      <div><div class="eyebrow"><span class="rule"></span>03 — Residences</div><h2 class="h2">Studio to three bedrooms,<br />9 layouts</h2></div>
+      <p>From a 366 sq ft studio in Axis to 850 sq ft three-bedroom homes in Brixton and Dover. Three layouts are dual-key: two keyed halves, each with its own kitchen and bathroom.</p>
+    </div>
+    <Residences groups={groups} project="Causewayz Square" open={{ group: 'two', key: 'B' }} />
+  </section>
+
+  <section class="sec tight" id="facilities">
+    <div class="head rv">
+      <div><div class="eyebrow"><span class="rule"></span>04 — Facilities</div><h2 class="h2">A park on Level 12,<br />pools in the sky</h2></div>
+      <p>More than 35 facilities over about 123,000 sq ft: the Level 12 podium park for Brixton and Dover, sky decks on Level 57, and Axis's lounge and infinity pool on Level 60.</p>
+    </div>
+    <div class="mosaic">
+      <div class="ph big rv-img"><Picture {...pic(img.infinity, "Wavescape Infinity Pool, Axis Level 60, artist's impression", '(max-width:760px) 100vw, 50vw')} /><span class="cap">Wavescape Infinity Pool · Axis L60 · artist's impression</span></div>
+      <div class="ph rv-img"><Picture {...pic(img.coralPool, "Pool on the Level 12 podium, artist's impression", '(max-width:760px) 50vw, 25vw', [400, 700, 1000])} /><span class="cap">Podium pools · L12</span></div>
+      <div class="ph rv-img"><Picture {...pic(img.skyGym, "Power Studio sky gym, Axis, artist's impression", '(max-width:760px) 50vw, 25vw', [400, 700, 1000])} /><span class="cap">Power Studio · Axis L60</span></div>
+      <div class="ph rv-img hide-sm"><Picture {...pic(img.skyBbq, "Glowing Sky BBQ and hammock garden, Level 57, artist's impression", '25vw', [400, 700, 1000])} /><span class="cap">Glowing Sky BBQ · L57</span></div>
+      <div class="ph rv-img"><Picture {...pic(img.kids, "Kids' water play on the Level 12 podium, artist's impression", '(max-width:760px) 50vw, 25vw', [400, 700, 1000])} /><span class="cap">Kids' Water Play · L12</span></div>
+    </div>
+    <div class="fac fac3">
+      <div class="rv">
+        <div class="eyebrow" style="margin-bottom:.6rem">Brixton &amp; Dover · Level 12 podium</div>
+        <ol>{p.facilities.l12.map((f, i) => <li><i>{String(i + 1).padStart(2, '0')}</i>{f}</li>)}</ol>
+      </div>
+      <div class="rv">
+        <div class="eyebrow" style="margin-bottom:.6rem">Axis · Level 60</div>
+        <ol style="columns:1">{p.facilities.axis.map((f) => <li><i>·</i>{f}</li>)}</ol>
+        <div class="eyebrow" style="margin:1.4rem 0 .6rem">Brixton &amp; Dover · Level 57</div>
+        <ol style="columns:1">{p.facilities.l57.map((f) => <li><i>·</i>{f}</li>)}</ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec dark morph" id="location">
+    <div class="loc">
+      <div class="rv">
+        <div class="eyebrow"><span class="rule"></span>05 — Location</div>
+        <h2 class="h2">Walk to the CIQ,<br />ride to Woodlands</h2>
+        <ul class="route">
+          <li class="home"><b>Causewayz Square</b><span>Jalan Lumba Kuda, JB City Centre</span></li>
+          <li>Approved link bridge<span>from the podium</span></li>
+          <li>JB CIQ<span>approx. 600 m · about 9 minutes</span></li>
+          <li>RTS Link · Bukit Chagar<span>approx. 900 m · about a 13-minute walk</span></li>
+          <li>Woodlands North, Singapore<span>about 6 minutes on the RTS Link</span></li>
+        </ul>
+        <p class="note">Also nearby: R&amp;F Mall (750 m), JB Sentral and the ETS to Kuala Lumpur. Distances and times as stated by EXSIM; the RTS Link and the link bridge are future infrastructure.</p>
+      </div>
+      <div class="ph rv-img"><Picture {...pic(img.bridge, "The link bridge from Causewayz Square's podium over the road, artist's impression", '(max-width:760px) 100vw, 45vw')} /><span class="cap">Link bridge from the podium · artist's impression</span></div>
+    </div>
+  </section>
+
+  <div class="band px">
+    <div class="layer"><Picture {...pic(img.retailStreet, "Causewayz Square's retail podium on the street, artist's impression", '100vw')} /></div>
+    <div class="over"><div class="serif">90,000 sq ft of shops below</div><div class="mono" style="opacity:.85">The retail podium · artist's impression</div></div>
+  </div>
+
+  <section class="sec" id="developer">
+    <div class="two">
+      <div class="rv">
+        <div class="eyebrow"><span class="rule"></span>06 — At a glance</div>
+        <ul class="list">
+          <li>Tenure<span>Freehold · land charged to AmBank</span></li>
+          <li>Expected completion<span>December 2030</span></li>
+          <li>Type<span>Serviced apartments over a retail podium</span></li>
+          <li>On sale<span>Axis, Brixton, Dover · 3,692 homes</span></li>
+          <li>Future phase<span>Coven (Tower C)</span></li>
+          <li>Axis management<span>Mana Mana Hospitality (EXSIM)</span></li>
+        </ul>
+      </div>
+      <div class="rv">
+        <div class="eyebrow"><span class="rule"></span>07 — Developer</div>
+        <div class="logos">
+          <Picture src={img.logo} alt="Causewayz Square @ JBCC" widths={[320, 631]} sizes="260px" formats={['webp']} class="devlogo" />
+          <Picture src={img.logoExsim} alt="EXSIM" widths={[150, 300]} sizes="96px" formats={['webp']} class="devlogo sm" />
+        </div>
+        <p style="margin-top:1rem;color:var(--mut-2)">EXSIM has developed in Malaysia since 2008 and was named an eight-time winner of FIABCI-Malaysia's property award. Causewayz Square is its Johor Bahru City Centre project, built for cross-border living: "Connecting Worlds, Bridging Cultures".</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec tight paper" id="faq">
+    <div class="eyebrow"><span class="rule"></span>08 — For Singapore buyers</div>
+    <h2 class="h2">Questions Joey hears every week</h2>
+    <div class="faq">
+      <details open>
+        <summary>Can Singaporeans buy at Causewayz Square?</summary>
+        <div class="a"><p>Yes, with the Johor State Authority's consent, which is a condition on this title. Foreign buyers also face a minimum purchase price, widely reported as RM1 million for apartments in Johor, so only the larger homes qualify. Joey will tell you which units you can buy today.</p>
+        <a class="pill dark sm" href={wa("Hi Joey, I'm buying from Singapore. Which Causewayz Square units can I buy?")} target="_blank" rel="noopener"><Icon name="wa" />Which units can I buy?</a></div>
+      </details>
+      <details>
+        <summary>Which tower suits renting out?</summary>
+        <div class="a"><p>Axis is professionally managed by Mana Mana Hospitality, part of EXSIM, and its layouts are marked short-term-rental friendly. Brixton and Dover suit long stays and families. The dual-key layouts (B, F1, F2) let you live in one part and let the other.</p></div>
+      </details>
+      <details>
+        <summary>When will it be ready?</summary>
+        <div class="a"><p>Expected completion is December 2030 for Axis, Brixton and Dover. The land is freehold.</p></div>
+      </details>
+      <details>
+        <summary>What do I pay on top of the price?</summary>
+        <div class="a"><p>Stamp duty, the state levy for foreign buyers and legal fees. Ask Joey for a worked example for the layout you like.</p></div>
+      </details>
+      <details>
+        <summary>Where can I see it?</summary>
+        <div class="a"><p>At the {p.gallery.jb}. Joey books your visit.</p>
+        <a class="pill dark sm" href={wa("Hi Joey, I'd like to book a viewing of Causewayz Square at the EXSIM sales gallery.")} target="_blank" rel="noopener"><Icon name="wa" />Book a viewing</a></div>
+      </details>
+    </div>
+  </section>
+
+  <Agent waText={waText} />
+
+  <Fragment slot="fine">Renders are artist's impressions supplied by EXSIM and are subject to change. Prices are the developer's advertised range per tower and may change without notice; ≈ {fxNote()}. *Johor's minimum price for foreign buyers, as widely reported; foreign purchase is subject to State Authority consent. Distances and times are EXSIM's.</Fragment>
+  <Legal slot="legal" title="Developer's particulars (as advertised by EXSIM)" legal={p.legal} />
+</Base>
+
+<style>
+  .towers{display:grid;grid-template-columns:repeat(3,1fr);gap:1.4rem;margin-top:2.6rem}
+  .tower .ph{aspect-ratio:4/5;border-radius:16px}
+  .tower h3{font:400 2rem/1.05 var(--fd);color:var(--ink);margin:.35rem 0 .45rem}
+  .tower p{color:var(--mut-2);font-size:.95rem}
+  .tower .from{margin-top:.8rem;font-size:.9rem;color:var(--mut)}
+  .tower .from b{font:400 1.25rem var(--fd);color:var(--ink)}
+  .tower .from span{color:var(--bronze-ink);font-weight:600;font-size:.8rem}
+  .fac3{grid-template-columns:1.6fr 1fr}
+  .logos{display:flex;align-items:center;gap:1.4rem}
+  .devlogo.sm{height:56px}
+  @media (max-width:760px){
+    .towers{grid-template-columns:1fr}
+    .tower .ph{aspect-ratio:4/3}
+    .fac3{grid-template-columns:1fr}
+  }
+</style>
