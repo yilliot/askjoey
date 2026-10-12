@@ -17,7 +17,7 @@ Listing website for **Joey Lee** (REN 80914, IQI Realty Sdn Bhd): new homes in J
 cd site && npm install                  # Node 24 (see .nvmrc)
 npm run dev                             # local dev server
 bash scripts/grade.sh                   # after changing source photos
-bash ../deploy/deploy.sh                # build, ship to axon, switch, check
+bash ../deploy/deploy.sh                # push to GitHub; axon pulls, builds, switches; check
 bash ../deploy/deploy.sh rollback       # back to the previous release
 ```
 
