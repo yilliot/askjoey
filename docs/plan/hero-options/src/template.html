@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hero options · Ask Joey · UI proposal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ivory:#F6F1E9;--paper:#FBF8F3;--white:#fff;--stone:#E6DED2;--stone-2:#D8CDBE;
+    --char:#2A2826;--ink:#141312;--mut:#6F6A63;--mut-2:#4A4640;--bronze:#BC8C68;--bronze-ink:#8A5F40;
+    --fd:'Newsreader',Georgia,serif;--ft:'Hanken Grotesk',system-ui,sans-serif;--fm:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font:16px/1.6 var(--ft);background:var(--ivory);color:var(--char);-webkit-font-smoothing:antialiased}
+  h1,h2,h3,p{margin:0}
+  a{color:var(--bronze-ink)}
+  img{display:block;max-width:100%}
+
+  /* proposal chrome: visibly not product UI */
+  .proposal-bar{position:sticky;top:0;z-index:10;background:#1d1b19;color:#EDE6DC;padding:.55rem 1rem;display:flex;flex-wrap:wrap;align-items:center;gap:.4rem 1rem;font:500 .74rem var(--fm)}
+  .proposal-bar .t{color:var(--bronze);font-weight:500;white-space:nowrap}
+  .proposal-bar .m{opacity:.7;white-space:nowrap}
+  .proposal-bar nav{display:flex;gap:.25rem;overflow-x:auto;scrollbar-width:none;margin-left:auto;max-width:100%}
+  .proposal-bar button{background:transparent;border:1px solid #4a4540;color:#EDE6DC;border-radius:999px;padding:.32rem .7rem;font:500 .72rem var(--fm);cursor:pointer;white-space:nowrap}
+  .proposal-bar button.on{background:#EDE6DC;color:#1d1b19;border-color:#EDE6DC}
+  .state{display:none;max-width:1180px;margin:0 auto;padding:2.2rem 1.2rem 4rem}
+  .state.on{display:block}
+
+  .eyebrow{font:600 .68rem var(--ft);letter-spacing:.2em;text-transform:uppercase;color:var(--bronze-ink)}
+  h1{font:400 clamp(2.2rem,5vw,3.6rem)/1.04 var(--fd);letter-spacing:-.015em;color:var(--ink);margin:.5rem 0 1rem}
+  h2{font:400 clamp(1.6rem,3vw,2.2rem)/1.1 var(--fd);color:var(--ink);margin:2.6rem 0 .8rem}
+  h3{font:600 .95rem var(--ft);color:var(--ink);margin:1.4rem 0 .4rem}
+  .lead{font:400 clamp(1.15rem,2vw,1.45rem)/1.4 var(--fd);color:var(--ink);max-width:52rem}
+  .muted{color:var(--mut)}
+  p + p{margin-top:.7rem}
+  ul.b{margin:.4rem 0 0;padding-left:1.1rem}
+  ul.b li{margin:.25rem 0}
+
+  .rec{background:var(--ink);color:#F3EEE6;border-radius:18px;padding:1.3rem 1.4rem;margin:1.6rem 0}
+  .rec .eyebrow{color:var(--bronze)}
+  .rec p{margin-top:.5rem;max-width:56rem}
+  .rec b{color:#fff}
+  .try{display:inline-flex;align-items:center;gap:.5rem;margin-top:.9rem;background:#F3EEE6;color:var(--ink);text-decoration:none;border-radius:999px;padding:.6rem 1.1rem;font:600 .86rem var(--ft)}
+  .try.dark{background:var(--ink);color:#F3EEE6}
+
+  .frames{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem;margin-top:1rem}
+  .frames.three{grid-template-columns:repeat(3,1fr)}
+  figure{margin:0}
+  figure img{border-radius:10px;box-shadow:0 14px 30px -22px rgb(0 0 0/.5);width:100%}
+  figcaption{font-size:.84rem;color:var(--mut-2);margin-top:.45rem}
+  figcaption i{font:500 .68rem var(--fm);font-style:normal;color:var(--bronze-ink);margin-right:.35rem}
+  .phones{display:flex;gap:.9rem;overflow-x:auto;padding-bottom:.4rem;margin-top:1rem}
+  .phones figure{flex:0 0 190px}
+  .phones img{border-radius:18px}
+
+  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.4rem}
+  .card{background:var(--white);border-radius:14px;padding:1rem 1.1rem}
+  .card h3{margin-top:0}
+  .card ul{margin:.3rem 0 0;padding-left:1.05rem;font-size:.9rem;color:var(--mut-2)}
+  .card li{margin:.2rem 0}
+
+  table{width:100%;border-collapse:collapse;margin-top:1rem;background:var(--white);border-radius:14px;overflow:hidden;font-size:.88rem}
+  th,td{text-align:left;vertical-align:top;padding:.7rem .8rem;border-bottom:1px solid var(--stone)}
+  th{font:600 .66rem var(--ft);letter-spacing:.14em;text-transform:uppercase;color:var(--mut);background:var(--paper)}
+  tr:last-child td{border-bottom:0}
+  .tag{display:inline-block;font:500 .66rem var(--fm);padding:.12rem .45rem;border-radius:999px;white-space:nowrap}
+  .open{background:#F4E3D3;color:#7a4a26}
+  .settled{background:#E3EBDD;color:#3f5a2e}
+  .deferred{background:#E8E4DE;color:#5f5a52}
+  .scroll{overflow-x:auto}
+
+  .note{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--bronze);color:#fff;font:600 .62rem var(--ft);vertical-align:middle;margin-left:.2rem;cursor:help}
+  ol.notes{font-size:.88rem;color:var(--mut-2);padding-left:1.2rem}
+  ol.notes li{margin:.3rem 0}
+  code{font:400 .8rem var(--fm);background:var(--paper);padding:.05rem .3rem;border-radius:4px}
+
+  @media (max-width:760px){
+    .frames,.frames.three,.cols{grid-template-columns:1fr}
+    .proposal-bar nav{margin-left:0}
+    th,td{padding:.55rem .6rem}
+  }
+</style>
+</head>
+<body>
+
+<div class="proposal-bar">
+  <span class="t">UI proposal · Hero options</span>
+  <span class="m">13 Oct 2026 · prototypes live on askjoey.axon</span>
+  <nav>
+    <button data-state="s0" class="on" onclick="show('s0')">Overview</button>
+    <button data-state="sa" onclick="show('sa')">A · Crossing</button>
+    <button data-state="sb" onclick="show('sb')">B · Name</button>
+    <button data-state="sc" onclick="show('sc')">C · Window</button>
+    <button data-state="sd" onclick="show('sd')">D · Film</button>
+    <button data-state="sr" onclick="show('sr')">References</button>
+    <button data-state="sn" onclick="show('sn')">Build notes</button>
+  </nav>
+</div>
+
+<!-- ───────────── Overview ───────────── -->
+<section id="s0" class="state on">
+  <div class="eyebrow">Ask Joey · New Casa Suites and Causewayz Square</div>
+  <h1>A hero with more impact</h1>
+  <p class="lead">Today's opening spends most of its scroll on a drawn map. The four options below put the photography back in the lead and move the camera through it. All four are built and running in front of the real pages, so you can scroll them before choosing.</p>
+  <a class="try dark" href="https://askjoey.axon.commun.cloud/lab/">Open the hero lab →</a>
+  <p class="muted" style="margin-top:.6rem;font-size:.88rem">Works on the Air and on your phone. Scroll each one slowly, then fast. The dark bar at the top of each page switches between options.</p>
+
+  <h2>Why today's hero feels flat</h2>
+  <div class="frames three">
+    <figure><img src="{{now-desk-00-0}}" alt="Today: the tower photo with the title" /><figcaption><i>Today · start</i>A good first frame: the tower at dusk, full screen.</figcaption></figure>
+    <figure><img src="{{now-desk-01-45}}" alt="Today: mid-journey, the map with a small photo" /><figcaption><i>Today · mid-scroll</i>The photo shrinks to a thumbnail; the map takes over.<span class="note" title="Pale lines on ivory: low contrast, little to look at">1</span></figcaption></figure>
+    <figure style="max-width:220px"><img src="{{now-phone-45}}" alt="Today on a phone, mid-journey" /><figcaption><i>Today · phone</i>The same: the map fills the screen.</figcaption></figure>
+  </div>
+  <ol class="notes">
+    <li>For two of its three screens the hero is a diagram: pale lines on ivory, with small pins popping in. The strongest thing we have, R&amp;F's photography, is off stage while the scroll plays.</li>
+    <li>The motion is lines being drawn rather than a camera moving, so the eye has nothing large to follow.</li>
+    <li>The award-winning property sites do the opposite. They reveal one full-screen render or aerial through a mask or wipe, set an oversized serif name over it, and let the scroll move through or into the picture. Maps sit one click away. See <a href="#" onclick="show('sr');return false">References</a>.</li>
+  </ol>
+
+  <div class="rec">
+    <div class="eyebrow">Recommendation</div>
+    <p><b>New Casa Suites: A · The crossing.</b> It keeps the story Singapore buyers care about, that Woodlands is just across the water, but tells it with R&amp;F's own aerial photograph. One frame shows Singapore, the RTS Link viaduct, the Causeway and Princess Cove. The camera then falls from the sky to the front door and ends on the plan. It is the only option that is both cinematic and informative.</p>
+    <p><b>Causewayz Square: D · The film.</b> EXSIM's dusk time-lapse is the only moving footage we have, and it suits a full-screen opening. It folds into a frame as EXSIM's distances count in.</p>
+    <p>B and C are pure brand moments. They are beautiful and quicker to scroll (under two screens), but say nothing about location. Either would also suit the home page later.</p>
+  </div>
+
+  <h2>Decisions</h2>
+  <div class="scroll"><table>
+    <tr><th>Question</th><th>Options</th><th>Recommendation</th><th>Status</th></tr>
+    <tr><td>Opening for New Casa Suites</td><td>A crossing · B name · C window · keep today's route map</td><td>A</td><td><span class="tag open">open</span></td></tr>
+    <tr><td>Opening for Causewayz Square</td><td>D film · B or C with an EXSIM render · keep today's photo</td><td>D</td><td><span class="tag open">open</span></td></tr>
+    <tr><td>Where the route map goes if A wins</td><td>Location section (still or animated) · drop it</td><td>Location section: the drawn route becomes the "how to get there" visual, one scroll down</td><td><span class="tag open">open</span></td></tr>
+    <tr><td>Home page</td><td>Keep the photo hero · reuse B or C with Joey's name</td><td>Keep for now, and decide after the two project pages</td><td><span class="tag deferred">deferred</span></td></tr>
+    <tr><td>Key facts bar</td><td>From the first frame · only after the opening</td><td>From the first frame, as in your brief: price and size before any scrolling</td><td><span class="tag settled">settled</span></td></tr>
+    <tr><td>Branded preloader (most winners have one)</td><td>None · logo loader</td><td>None. It costs a buyer on phone data 1–3 s, and one winner's loader stalled at 86% when tested</td><td><span class="tag settled">settled</span></td></tr>
+  </table></div>
+</section>
+
+<!-- ───────────── A ───────────── -->
+<section id="sa" class="state">
+  <div class="eyebrow">Option A · for New Casa Suites · recommended</div>
+  <h1>The crossing</h1>
+  <p class="lead">One camera move from the sky to the front door, in R&amp;F's own photographs. It opens on the Causeway aerial with the places pinned on the photo, falls toward Princess Cove, passes through the night aerial, lands on the tower at street level and ends on the plan.</p>
+  <a class="try dark" href="https://askjoey.axon.commun.cloud/lab/a/">Try A →</a>
+
+  <h2>Desktop</h2>
+  <div class="frames">
+    <figure><img src="{{a-desk-0}}" alt="" /><figcaption><i>Arrival</i>The Causeway aerial, full screen. The name rises out of its lines.</figcaption></figure>
+    <figure><img src="{{a-desk-1}}" alt="" /><figcaption><i>Scroll 16%</i>The title leaves. Singapore, the RTS Link, the Causeway, R&amp;F Princess Cove and Johor Bahru light up on the photo.<span class="note" title="Places are matched to R&F's brochure map (p.10). The JB CIQ is not pinned: I couldn't place it on the photo with certainty.">1</span></figcaption></figure>
+    <figure><img src="{{a-desk-2}}" alt="" /><figcaption><i>Scroll 34%</i>The camera falls toward Princess Cove. Every label except home lets go.</figcaption></figure>
+    <figure><img src="{{a-desk-3}}" alt="" /><figcaption><i>Scroll 55%</i>Through a blur into the night aerial, while the 650 m covered bridge counts up.</figcaption></figure>
+    <figure><img src="{{a-desk-4}}" alt="" /><figcaption><i>Scroll 80%</i>Down to the street: the tower at dusk.</figcaption></figure>
+    <figure><img src="{{a-desk-5}}" alt="" /><figcaption><i>End</i>Your home: the Type C plan wipes in with its WhatsApp button. Then the page continues.</figcaption></figure>
+  </div>
+  <h2>Phone</h2>
+  <div class="phones">
+    <figure><img src="{{a-phone-0}}" alt="" /><figcaption><i>Arrival</i></figcaption></figure>
+    <figure><img src="{{a-phone-1}}" alt="" /><figcaption><i>Places</i></figcaption></figure>
+    <figure><img src="{{a-phone-2}}" alt="" /><figcaption><i>Night aerial</i></figcaption></figure>
+    <figure><img src="{{a-phone-3}}" alt="" /><figcaption><i>Your home</i></figcaption></figure>
+  </div>
+  <div class="cols">
+    <div class="card"><h3>Uses</h3><ul><li>R&amp;F Causeway aerial (3,000 px)</li><li>R&amp;F night aerial</li><li>Tower at dusk (landscape and portrait)</li><li>Type C plan</li></ul></div>
+    <div class="card"><h3>Inspired by</h3><ul><li>Son Daven: the scroll flies the camera forward over an aerial</li><li>Montfort: a pass through haze between views</li><li>ERA Residence: pins on the picture itself</li></ul></div>
+    <div class="card"><h3>Watch-outs</h3><ul><li>About 2.8 screens of scroll; "Skip ↓" stays bottom right</li><li>The aerial is enlarged about 1.8× at the deepest zoom; the blur into the night shot hides it<span class="note" title="A larger original from R&F would make it crisp">2</span></li><li>The band below the hero repeats the aerial; it would change to another photo</li></ul></div>
+  </div>
+  <ol class="notes">
+    <li>The labels come from R&amp;F's brochure map: R&amp;F Princess Cove sits between the Causeway and the RTS Link viaduct. I left the JB CIQ off because I couldn't place it on the photo with certainty.</li>
+    <li>The panorama is 3,000 px wide. If R&amp;F has the original drone file, the zoom can go deeper and stay sharp.</li>
+  </ol>
+</section>
+
+<!-- ───────────── B ───────────── -->
+<section id="sb" class="state">
+  <div class="eyebrow">Option B · for New Casa Suites</div>
+  <h1>Through the name</h1>
+  <p class="lead">An ivory page with the name set huge. The tower shows only through the letters. As you scroll, the camera flies into the thickest stroke of a letter until the photo floods the screen, then the title settles in white.</p>
+  <a class="try dark" href="https://askjoey.axon.commun.cloud/lab/b/">Try B →</a>
+  <h2>Desktop</h2>
+  <div class="frames">
+    <figure><img src="{{b-desk-0}}" alt="" /><figcaption><i>Arrival</i>The tower seen through "New Casa Suites".</figcaption></figure>
+    <figure><img src="{{b-desk-1}}" alt="" /><figcaption><i>Scroll 30%</i>The name grows toward the camera.</figcaption></figure>
+    <figure><img src="{{b-desk-2}}" alt="" /><figcaption><i>Scroll 50%</i>Flying through the C: the photo floods in around its counter.</figcaption></figure>
+    <figure><img src="{{b-desk-3}}" alt="" /><figcaption><i>End</i>Full bleed. The title settles in white and the facts stay.</figcaption></figure>
+  </div>
+  <h2>Phone</h2>
+  <div class="phones">
+    <figure><img src="{{b-phone-0}}" alt="" /><figcaption><i>Arrival</i></figcaption></figure>
+    <figure><img src="{{b-phone-1}}" alt="" /><figcaption><i>Through the letter</i></figcaption></figure>
+    <figure><img src="{{b-phone-2}}" alt="" /><figcaption><i>End</i></figcaption></figure>
+  </div>
+  <div class="cols">
+    <div class="card"><h3>Uses</h3><ul><li>Tower at dusk only</li><li>The name in Newsreader</li></ul></div>
+    <div class="card"><h3>Inspired by</h3><ul><li>Silver Pinewood: the giant name first, the render behind it</li><li>ERA Residence: an oversized serif name over one render</li></ul></div>
+    <div class="card"><h3>Watch-outs</h3><ul><li>About 1.8 screens; the strongest "wow" on arrival</li><li>Says nothing about location</li><li>A full-screen mask scaled about 100×: smooth in Chrome, still to check on an iPhone in Safari</li></ul></div>
+  </div>
+</section>
+
+<!-- ───────────── C ───────────── -->
+<section id="sc" class="state">
+  <div class="eyebrow">Option C · for New Casa Suites</div>
+  <h1>The window opens</h1>
+  <p class="lead">A gallery print of the tower in an arched frame, between "New Casa" and "Suites". As you scroll, the arch opens to full screen and the two words part to the edges. It is the calmest and most "luxury residence" of the four.</p>
+  <a class="try dark" href="https://askjoey.axon.commun.cloud/lab/c/">Try C →</a>
+  <h2>Desktop</h2>
+  <div class="frames three">
+    <figure><img src="{{c-desk-0}}" alt="" /><figcaption><i>Arrival</i>The arch grows from a sliver and the words rise.</figcaption></figure>
+    <figure><img src="{{c-desk-1}}" alt="" /><figcaption><i>Scroll 30%</i>The arch opens and the words part.</figcaption></figure>
+    <figure><img src="{{c-desk-2}}" alt="" /><figcaption><i>End</i>Full bleed, with the title in white.</figcaption></figure>
+  </div>
+  <h2>Phone</h2>
+  <div class="phones">
+    <figure><img src="{{c-phone-0}}" alt="" /><figcaption><i>Arrival</i></figcaption></figure>
+    <figure><img src="{{c-phone-1}}" alt="" /><figcaption><i>Opening</i></figcaption></figure>
+    <figure><img src="{{c-phone-2}}" alt="" /><figcaption><i>End</i></figcaption></figure>
+  </div>
+  <div class="cols">
+    <div class="card"><h3>Uses</h3><ul><li>Tower at dusk (landscape and portrait)</li></ul></div>
+    <div class="card"><h3>Inspired by</h3><ul><li>ERA Residence: an arch-shaped mask that widens to full bleed</li><li>Kononenko: the render and the big name trading places</li></ul></div>
+    <div class="card"><h3>Watch-outs</h3><ul><li>About 1.6 screens; the lightest and safest to build</li><li>Lower drama than A or B</li><li>Says nothing about location</li></ul></div>
+  </div>
+</section>
+
+<!-- ───────────── D ───────────── -->
+<section id="sd" class="state">
+  <div class="eyebrow">Option D · for Causewayz Square · recommended</div>
+  <h1>The film</h1>
+  <p class="lead">EXSIM's dusk time-lapse of the Johor Bahru skyline, full screen and silent, looping without a visible seam. As you scroll, the film folds into a frame on the right with the towers kept in the middle, and EXSIM's distances count in beside it.</p>
+  <a class="try dark" href="https://askjoey.axon.commun.cloud/lab/d/">Try D →</a>
+  <h2>Desktop</h2>
+  <div class="frames three">
+    <figure><img src="{{d-desk-0}}" alt="" /><figcaption><i>Arrival</i>The film, full screen, as the name rises.</figcaption></figure>
+    <figure><img src="{{d-desk-1}}" alt="" /><figcaption><i>Scroll 40%</i>The film folds into a frame.</figcaption></figure>
+    <figure><img src="{{d-desk-2}}" alt="" /><figcaption><i>End</i>≈ 600 m to the CIQ, ≈ 900 m to the RTS Link and 3,692 homes count in.</figcaption></figure>
+  </div>
+  <h2>Phone</h2>
+  <div class="phones">
+    <figure><img src="{{d-phone-0}}" alt="" /><figcaption><i>Arrival</i></figcaption></figure>
+    <figure><img src="{{d-phone-1}}" alt="" /><figcaption><i>Folding</i></figcaption></figure>
+    <figure><img src="{{d-phone-2}}" alt="" /><figcaption><i>End</i></figcaption></figure>
+  </div>
+  <div class="cols">
+    <div class="card"><h3>Uses</h3><ul><li>EXSIM's aerial time-lapse (8 s, 1280×720), graded to match the site</li><li>EXSIM's distances, as already on the page</li></ul></div>
+    <div class="card"><h3>Inspired by</h3><ul><li>Sobha Privy Collection: a sticky looping film</li><li>360 Lexington: distance to the station as the headline</li><li>Son Daven: an aerial film that drives the opening</li></ul></div>
+    <div class="card"><h3>Watch-outs</h3><ul><li>The film is 720p: fine on a laptop, soft on a large monitor. EXSIM's master file would fix it.</li><li>2.4 MB. It loads only for visitors who allow motion, and pauses off screen.</li><li>Used on the same footing as the EXSIM renders already on the site</li></ul></div>
+  </div>
+</section>
+
+<!-- ───────────── References ───────────── -->
+<section id="sr" class="state">
+  <div class="eyebrow">References</div>
+  <h1>What award-winning property sites do</h1>
+  <p class="lead">Ten Awwwards winners, nine of them property. I checked each award and date on its awwwards.com page and opened each live site on 13 Oct 2026.</p>
+  <div class="scroll"><table>
+    <tr><th>Site</th><th>Award</th><th>The opening</th><th>What we take</th></tr>
+    <tr><td><a href="https://www.awwwards.com/sites/era-residence">ERA Residence</a><br /><span class="muted">Estepona, Spain</span></td><td>Site of the Day 31 Aug 2026 · Developer Award · Site of the Month Aug 2026</td><td>An arch-shaped mask opens on a pool render and widens to full bleed. A huge serif name builds over it. A day/night toggle; pins on the render open tooltips.</td><td>C's arch · A's pins on the picture</td></tr>
+    <tr><td><a href="https://www.awwwards.com/sites/silver-pinewood-residences">Silver Pinewood Residences</a></td><td>Site of the Day 9 Oct 2025 · Developer Award</td><td>A giant name builds line by line, then the dusk render of the tower appears behind it. On scroll the name shrinks to a corner logo.</td><td>B</td></tr>
+    <tr><td><a href="https://www.awwwards.com/sites/son-daven">Son Daven</a><br /><span class="muted">resort, Carpathians</span></td><td>Site of the Day 5 Jun 2026 · Developer Award · Site of the Month Jun 2026</td><td>A stripe wipe reveals a sunset aerial. On desktop the scroll drives an aerial film, so the camera flies forward; phones get a still. Investor figures sit beside the opening.</td><td>A's camera move · D</td></tr>
+    <tr><td><a href="https://www.awwwards.com/sites/explore-primland">Explore Primland</a></td><td>Site of the Day 4 Feb 2026 · Developer Award</td><td>A top-down 3D estate with drifting clouds; the title animates in letter by letter, with "Explore the map".</td><td>From the air to the place · the map one click away</td></tr>
+    <tr><td><a href="https://www.awwwards.com/sites/sobha-privy-collection">Sobha Privy Collection</a><br /><span class="muted">Dubai</span></td><td>Site of the Day 23 Sep 2026 · Developer Award</td><td>A sticky looping film that zooms with the scroll, with a "3D Map" button. Its preloader stalled at 86% on both tries.</td><td>D · no preloader</td></tr>
+    <tr><td><a href="https://www.awwwards.com/sites/kononenko-architectural-bureau">Kononenko Architectural Bureau</a></td><td>Site of the Day 23 Aug 2026 · Developer Award</td><td>A full-bleed render collapses into a thin band under the big name.</td><td>C, in reverse</td></tr>
+    <tr><td><a href="https://www.awwwards.com/sites/360-lexington-ave">360 Lexington Ave</a><br /><span class="muted">New York</span></td><td>Honorable Mention 1 Sep 2026</td><td>A full-bleed film with "a two-minute walk from Grand Central".</td><td>D's distances as the headline</td></tr>
+    <tr><td><a href="https://www.awwwards.com/sites/springs">Springs</a></td><td>Site of the Day 8 Mar 2026 · Developer Award</td><td>Split-screen mood photos wipe past a fixed logo.</td><td>Not used: it needs lifestyle photography we don't have</td></tr>
+    <tr><td><a href="https://www.awwwards.com/sites/hubtown">Hubtown</a><br /><span class="muted">Mumbai</span></td><td>Site of the Day 10 Jun 2026 · Developer Award</td><td>An abstract 3D glowing cube with a scrambling headline.</td><td>Not used: abstract, the same weakness as today's map</td></tr>
+    <tr><td><a href="https://www.awwwards.com/sites/montfort">Montfort</a><br /><span class="muted">another sector</span></td><td>Site of the Day 23 Jun 2025 · Developer Award</td><td>The camera flies through thick cloud over snowy peaks while the statement fades in.</td><td>A's blur pass between shots</td></tr>
+  </table></div>
+  <h2>The pattern</h2>
+  <p>Almost every property winner reveals one full-screen render or aerial through a mask or wipe, with oversized serif type over it. The motion comes from moving through or into that picture, not from diagrams. Maps sit behind an "Explore the map" button. Most add a branded preloader, which we are skipping.</p>
+</section>
+
+<!-- ───────────── Build notes ───────────── -->
+<section id="sn" class="state">
+  <div class="eyebrow">Build notes</div>
+  <h1>How the lab is built, and what adopting one means</h1>
+  <h3>Already done (commit 8897486, live on axon)</h3>
+  <ul class="b">
+    <li>Each project page is now a template with a hero slot (<code>site/src/components/pages/NcsPage.astro</code>, <code>CwsPage.astro</code>). The live pages are unchanged: their built HTML still carries today's heroes.</li>
+    <li>The four heroes: <code>site/src/components/lab/HeroCrossing.astro</code>, <code>HeroName.astro</code>, <code>HeroWindow.astro</code>, <code>HeroFilm.astro</code>. Each sits in front of the real page at <code>/lab/a/</code> to <code>/lab/d/</code>. They reuse the site's motion setup (GSAP, smooth scroll) and its facts bar, plan card and captions.</li>
+    <li>Without motion (reduced-motion setting or no JavaScript), every option falls back to a still photo hero with the title and the facts.</li>
+    <li>The film is made reproducibly by <code>bash scripts/grade.sh exsim</code>: graded and looped, no sound, at <code>public/video/causewayz-aerial.mp4</code>.</li>
+  </ul>
+  <h3>Adopting the chosen options</h3>
+  <ul class="b">
+    <li>Swap the hero slot's default in each template. Delete <code>/lab/</code>, and the film too if D isn't chosen.</li>
+    <li>If A wins, today's route hero retires and its map moves to the Location section. The band under the hero changes to a photo other than the aerial.</li>
+    <li>About half a day for both pages, including phone and Safari checks.</li>
+  </ul>
+  <h3>Still unverified</h3>
+  <ul class="b">
+    <li>A real iPhone in Safari (I've only tested in Chrome's engine, at desktop and phone sizes). Most at risk is B's letter mask.</li>
+    <li>Whether R&amp;F has a larger original of the Causeway aerial, and EXSIM a full-resolution master of the film.</li>
+    <li>Low-end Android smoothness for A, which has three photo layers and blur.</li>
+  </ul>
+</section>
+
+<script>
+  function show(id){
+    document.querySelectorAll('.state').forEach(s=>s.classList.toggle('on',s.id===id));
+    document.querySelectorAll('.proposal-bar button').forEach(b=>b.classList.toggle('on',b.dataset.state===id));
+    scrollTo(0,0);
+  }
+</script>
+</body>
+</html>
