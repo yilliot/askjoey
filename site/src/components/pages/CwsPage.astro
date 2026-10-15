@@ -2,8 +2,7 @@
 // The Causewayz Square page. The hero is a slot so /lab/ can try other openings in front of the same page.
 import { Picture } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
-import ArtPicture from '../ArtPicture.astro';
-import Facts from '../Facts.astro';
+import HeroFilm from '../HeroFilm.astro';
 import Residences from '../Residences.astro';
 import Agent from '../Agent.astro';
 import Legal from '../Legal.astro';
@@ -33,19 +32,7 @@ const pic = (src: any, alt: string, sizes: string, widths = [500, 900, 1300, 165
   over
   waText={waText}
 >
-  <slot name="hero">
-  <section class="phero" aria-label={p.name}>
-    <div class="bg"><ArtPicture wide={img.hero} tall={img.heroPortrait} alt="Causewayz Square's towers from the road, artist's impression" eager /></div>
-    <div class="j-coord mono" style="z-index:3">1.47° N · 103.77° E<br />Artist's impression</div>
-    <div class="in">
-      <div class="eyebrow"><span class="rule"></span>{p.area}</div>
-      <h1>Causewayz <em>Square</em></h1>
-      <p>{p.intro}</p>
-    </div>
-    <Facts project={p} />
-    <div class="j-mfacts"><div class="p"><small>From</small><b>{rm(p.priceFrom)}</b><span>≈ {sgd(p.priceFrom)}</span></div><div><small>Beds · baths</small><b>Studio–3 · 1–2</b></div><div><small>Size</small><b>366–850 sf</b></div></div>
-  </section>
-  </slot>
+  <slot name="hero"><HeroFilm /></slot>
 
   <section class="sec" id="address">
     <div class="intro">

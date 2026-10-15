@@ -1,11 +1,11 @@
 ---
-// Hero lab D · "The film" (Causewayz Square): EXSIM's aerial time-lapse, full bleed and silent; the scroll folds
+// Causewayz Square hero, "the film" (lab option D): EXSIM's aerial time-lapse, full bleed and silent; the scroll folds
 // the film into a frame while the distances come in. Without the motion script: the poster frame, still.
 import { getImage } from 'astro:assets';
-import Facts from '../Facts.astro';
-import { project as p } from '../../data/causewayz-square';
-import poster from '../../assets/img/exsim/film-poster.jpg';
-import { rm, sgd } from '../../lib/format';
+import Facts from './Facts.astro';
+import { project as p } from '../data/causewayz-square';
+import poster from '../assets/img/exsim/film-poster.jpg';
+import { rm, sgd } from '../lib/format';
 
 const still = await getImage({ src: poster, width: 1280, format: 'webp', quality: 80 });
 ---
@@ -74,7 +74,7 @@ const still = await getImage({ src: poster, width: 1280, format: 'webp', quality
 </style>
 
 <script>
-  import { gsap, ScrollTrigger, motionOn } from '../../scripts/motion';
+  import { gsap, ScrollTrigger, motionOn } from '../scripts/motion';
 
   const fm = document.querySelector<HTMLElement>('.fm');
   if (fm) {

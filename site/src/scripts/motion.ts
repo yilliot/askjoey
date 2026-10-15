@@ -144,7 +144,7 @@ function cap(tl: gsap.core.Timeline, el: Element[], inAt: number, outAt: number)
   tl.to(el, { autoAlpha: 0, y: -12, duration: 3 }, outAt);
 }
 
-/** Photo heroes (home, Causewayz Square): the title rises away and the photo drifts slower than the page. */
+/** Photo heroes (home): the title rises away and the photo drifts slower than the page. */
 function pageHero() {
   const h = document.querySelector<HTMLElement>('.phero');
   if (!h) return;
