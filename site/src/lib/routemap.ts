@@ -32,7 +32,7 @@ const desk: Geo = {
     bc: { at: [505, 252], lbl: [492, 248], anchor: 'end', name: 'Bukit Chagar', sub: 'RTS terminus' },
     ciq: { at: [585, 286], lbl: [585, 266], anchor: 'middle', name: 'JB CIQ' },
     mall: { at: [845, 286], lbl: [845, 314], anchor: 'middle', name: 'R&amp;F Mall' },
-    home: { at: [905, 236], lbl: [924, 262], anchor: 'start', name: 'New Casa Suites', sub: 'R&amp;F Princess Cove · Phase 3' },
+    home: { at: [905, 236], lbl: [924, 262], anchor: 'start', name: 'R&amp;F Princess Cove', sub: 'Phase 3 · New Casa Suites' },
   },
   fs: 1,
 };
@@ -43,7 +43,7 @@ const phone: Geo = {
   sgCoast: 'M0,458 C70,470 120,446 190,460 S300,472 330,454 S370,450 390,460',
   roads: ['M0,236 C90,250 200,214 390,240', 'M352,0 C356,100 346,200 360,326', 'M0,640 C120,620 260,660 390,630'],
   causeway: [[190, 334], [196, 456]], causewayLbl: [202, 402],
-  straitLbl: [232, 446], jbLbl: [40, 240], sgLbl: [44, 566],
+  straitLbl: [232, 446], jbLbl: [40, 214], sgLbl: [44, 566],
   tel: 'M110,505 C122,560 136,600 150,650',
   rts: 'M110,505 C108,450 140,410 133,360 S124,300 128,282',
   walk: 'M128,282 C145,292 160,304 175,312',
@@ -55,7 +55,7 @@ const phone: Geo = {
     bc: { at: [128, 282], lbl: [116, 278], anchor: 'end', name: 'Bukit Chagar' },
     ciq: { at: [175, 312], lbl: [175, 338], anchor: 'middle', name: 'JB CIQ' },
     mall: { at: [250, 300], lbl: [258, 322], anchor: 'start', name: 'R&amp;F Mall' },
-    home: { at: [300, 250], lbl: [288, 254], anchor: 'end', name: 'New Casa Suites' },
+    home: { at: [300, 250], lbl: [288, 254], anchor: 'end', name: 'R&amp;F Princess Cove' },
   },
   fs: 0.86,
 };
@@ -81,7 +81,7 @@ export function routeMap(kind: 'desk' | 'phone'): string {
   };
   const [[cx1, cy1], [cx2, cy2]] = g.causeway;
   return [
-    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Schematic route: Woodlands North, RTS Link to Bukit Chagar, JB CIQ, the 650 m covered link bridge, R&amp;F Mall, New Casa Suites">`,
+    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Schematic route: Woodlands North, RTS Link to Bukit Chagar, JB CIQ, the 650 m covered link bridge, R&amp;F Mall, R&amp;F Princess Cove">`,
     `<defs><pattern id="${id}" width="12" height="12" patternUnits="userSpaceOnUse"><path d="M0,6 H12" stroke="#D8CEBF" stroke-width="1"/></pattern></defs>`,
     `<rect width="${W}" height="${H}" fill="#E8E1D5"/><rect width="${W}" height="${H}" fill="url(#${id})"/>`,
     `<path d="${g.jbCoast} L${W},0 L0,0 Z" fill="#F6F1E9" stroke="#CDC2B2" stroke-width="1"/>`,
