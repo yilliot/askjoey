@@ -9,3 +9,6 @@ materials/**/images/
 docs/plan/**/.assets/
 materials/**/videos/
 materials/**/press/
+
+# personal Claude Code settings
+.claude/settings.local.json
